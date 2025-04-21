@@ -4,17 +4,20 @@ import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
 
   const handleThemeChange = () => {
     toggleTheme();
-    toast({
-      title: `${theme === 'dark' ? 'Light' : 'Dark'} Mode Activated`,
+    
+    // Show success toast for theme change
+    toast.success(`${theme === 'dark' ? 'Light' : 'Dark'} Mode Activated`, {
       description: `Theme has been changed to ${theme === 'dark' ? 'light' : 'dark'} mode.`,
-      className: `${theme === 'dark' ? 'bg-white text-black' : 'bg-slate-900 text-white'}`,
+      position: "bottom-center",
+      duration: 3000,
     });
   };
 

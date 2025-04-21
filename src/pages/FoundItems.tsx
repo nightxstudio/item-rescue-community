@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -9,6 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { FoundItem } from "@/types";
 import { Image, MapPin, Plus, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const mockFoundItems: FoundItem[] = [
   {
@@ -35,7 +37,7 @@ const mockFoundItems: FoundItem[] = [
 
 const FoundItems = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
   const [showFoundItemForm, setShowFoundItemForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   
@@ -88,16 +90,27 @@ const FoundItems = () => {
     try {
       setIsLoading(true);
       
+      // Get the user ID from the authenticated user
+      const userId = user?.uid;
+      
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+      
       const { data, error } = await supabase
         .from('found_items')
         .insert([
           {
-            created_by: user?.id,
+            created_by: userId,
             image: imagePreview,
             location,
             description,
-            organization: user?.organization,
-            organization_type: user?.organizationType
+            organization: user?.schoolName || user?.collegeName || user?.companyName || '',
+            organization_type: user?.occupation === 'student' 
+              ? user.studentType 
+              : user?.occupation === 'professional' 
+                ? 'company' 
+                : ''
           }
         ])
         .select()
@@ -111,18 +124,19 @@ const FoundItems = () => {
       setDescription("");
       setShowFoundItemForm(false);
       
-      toast({
-        title: "Item Posted Successfully",
+      // Show success toast
+      toast.success("Item posted successfully", {
         description: "Your found item has been reported.",
-        className: "bg-green-500 text-white",
+        position: "bottom-center",
+        duration: 3000,
       });
       
     } catch (error) {
       console.error("Failed to submit found item:", error);
-      toast({
-        title: "Error",
-        description: "Failed to post the found item. Please try again.",
-        variant: "destructive",
+      toast.error("Failed to post item", {
+        description: "Please try again later.",
+        position: "bottom-center",
+        duration: 3000,
       });
     } finally {
       setIsLoading(false);

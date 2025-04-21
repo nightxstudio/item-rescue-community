@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
@@ -119,9 +120,7 @@ const Sidebar = () => {
       <div className="p-4 mt-auto">
         <Link
           to="/delete-account"
-          className={cn(
-            "flex items-center w-full px-4 py-3 text-sm font-medium rounded-md bg-red-600 text-white hover:bg-red-700 transition-all"
-          )}
+          className="flex items-center w-full px-4 py-3 text-sm font-medium rounded-md bg-red-600 text-white hover:bg-red-700 transition-all"
         >
           <Trash2 className="w-5 h-5 mr-3" />
           Delete Account

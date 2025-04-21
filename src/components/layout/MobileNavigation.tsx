@@ -9,7 +9,8 @@ import {
   FileSearch, 
   Info, 
   HelpCircle, 
-  Trash2
+  Trash2,
+  Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +51,11 @@ const MobileNavigation = () => {
       icon: HelpCircle
     },
     {
+      name: "Settings",
+      href: "/settings",
+      icon: Settings
+    },
+    {
       name: "Delete Account",
       href: "/delete-account",
       icon: Trash2
@@ -88,7 +94,8 @@ const MobileNavigation = () => {
                     "flex items-center px-4 py-3 text-lg font-medium rounded-md transition-all hover:bg-primary/10 hover:text-primary",
                     location.pathname === link.href
                       ? "bg-primary/10 text-primary"
-                      : "text-slate-700 dark:text-slate-300"
+                      : "text-slate-700 dark:text-slate-300",
+                    link.name === "Delete Account" ? "text-red-500" : ""
                   )}
                   onClick={closeMenu}
                 >
