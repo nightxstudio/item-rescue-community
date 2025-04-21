@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -7,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/utils/validation";
 import { Pencil, Save, X } from "lucide-react";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "lucide-react";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { UserOccupation, StudentType } from "@/types";
 
 import { colleges, companies, schools, localities } from "@/data/organizationData";
 
@@ -66,8 +68,8 @@ const Profile = () => {
       if (value === "student") {
         setEditedData(prev => ({
           ...prev,
-          occupation: value,
-          studentType: "college",
+          occupation: value as UserOccupation,
+          studentType: "college" as StudentType,
           collegeName: "",
           universityRollNo: "",
           branch: "",
@@ -85,11 +87,11 @@ const Profile = () => {
       } else {
         setEditedData(prev => ({
           ...prev,
-          occupation: value,
+          occupation: value as UserOccupation,
           companyName: "",
           locality: "",
           employeeId: "",
-          studentType: undefined,
+          studentType: undefined as any,
           schoolName: "",
           className: "",
           section: "",
