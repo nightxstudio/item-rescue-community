@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
@@ -22,7 +21,6 @@ const Sidebar = () => {
   const { user } = useAuth();
   const location = useLocation();
 
-  // Main links (excluding delete)
   const links: SidebarLink[] = [
     {
       name: "Profile",
@@ -97,7 +95,6 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* Main navigation */}
         <nav className="flex-1">
           <ul className="space-y-1">
             {links.map((link) => (
@@ -119,8 +116,7 @@ const Sidebar = () => {
           </ul>
         </nav>
       </div>
-      {/* Move Delete Account to the bottom, red styling */}
-      <div className="p-4">
+      <div className="p-4 mt-auto">
         <Link
           to="/delete-account"
           className={cn(

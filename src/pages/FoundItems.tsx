@@ -1,6 +1,6 @@
-
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,8 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { FoundItem } from "@/types";
 import { Image, MapPin, Plus, Search } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-// Mock data for found items
 const mockFoundItems: FoundItem[] = [
   {
     id: "1",
@@ -35,10 +35,10 @@ const mockFoundItems: FoundItem[] = [
 
 const FoundItems = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [showFoundItemForm, setShowFoundItemForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   
-  // Found item form state
   const [itemImage, setItemImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [location, setLocation] = useState("");
@@ -46,7 +46,6 @@ const FoundItems = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  // Filter found items based on search query
   const filteredFoundItems = mockFoundItems.filter(item => {
     return searchQuery === "" || 
       item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -58,7 +57,6 @@ const FoundItems = () => {
       const file = e.target.files[0];
       setItemImage(file);
       
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -90,28 +88,42 @@ const FoundItems = () => {
     try {
       setIsLoading(true);
       
-      // In a real app, this would be an API call to create a new found item ticket
-      console.log("Submitting found item:", {
-        image: itemImage,
-        location,
-        description,
-      });
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Reset form
+      const { data, error } = await supabase
+        .from('found_items')
+        .insert([
+          {
+            created_by: user?.id,
+            image: imagePreview,
+            location,
+            description,
+            organization: user?.organization,
+            organization_type: user?.organizationType
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
       setItemImage(null);
       setImagePreview(null);
       setLocation("");
       setDescription("");
       setShowFoundItemForm(false);
       
-      // Add the new item to the list (in a real app, this would be done via API)
-      // This is just for demonstration
+      toast({
+        title: "Item Posted Successfully",
+        description: "Your found item has been reported.",
+        className: "bg-green-500 text-white",
+      });
       
     } catch (error) {
       console.error("Failed to submit found item:", error);
+      toast({
+        title: "Error",
+        description: "Failed to post the found item. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

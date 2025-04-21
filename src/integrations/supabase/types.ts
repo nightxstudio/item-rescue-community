@@ -9,7 +9,125 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      found_items: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          image: string | null
+          location: string | null
+          organization: string | null
+          organization_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image?: string | null
+          location?: string | null
+          organization?: string | null
+          organization_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image?: string | null
+          location?: string | null
+          organization?: string | null
+          organization_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "found_items_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          branch: string | null
+          class_name: string | null
+          class_roll_no: string | null
+          college_class_roll_no: string | null
+          college_name: string | null
+          college_section: string | null
+          company_name: string | null
+          created_at: string | null
+          dob: string | null
+          email: string | null
+          employee_id: string | null
+          gender: string | null
+          id: string
+          locality: string | null
+          name: string | null
+          occupation: string | null
+          parents_phone: string | null
+          phone_number: string | null
+          profile_picture: string | null
+          school_name: string | null
+          section: string | null
+          student_type: string | null
+          university_roll_no: string | null
+        }
+        Insert: {
+          branch?: string | null
+          class_name?: string | null
+          class_roll_no?: string | null
+          college_class_roll_no?: string | null
+          college_name?: string | null
+          college_section?: string | null
+          company_name?: string | null
+          created_at?: string | null
+          dob?: string | null
+          email?: string | null
+          employee_id?: string | null
+          gender?: string | null
+          id: string
+          locality?: string | null
+          name?: string | null
+          occupation?: string | null
+          parents_phone?: string | null
+          phone_number?: string | null
+          profile_picture?: string | null
+          school_name?: string | null
+          section?: string | null
+          student_type?: string | null
+          university_roll_no?: string | null
+        }
+        Update: {
+          branch?: string | null
+          class_name?: string | null
+          class_roll_no?: string | null
+          college_class_roll_no?: string | null
+          college_name?: string | null
+          college_section?: string | null
+          company_name?: string | null
+          created_at?: string | null
+          dob?: string | null
+          email?: string | null
+          employee_id?: string | null
+          gender?: string | null
+          id?: string
+          locality?: string | null
+          name?: string | null
+          occupation?: string | null
+          parents_phone?: string | null
+          phone_number?: string | null
+          profile_picture?: string | null
+          school_name?: string | null
+          section?: string | null
+          student_type?: string | null
+          university_roll_no?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
