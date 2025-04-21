@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -8,6 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/utils/validation";
 import { Pencil, Save, X } from "lucide-react";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "lucide-react";
+
+import { colleges, companies, schools, localities } from "@/data/organizationData";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -19,9 +21,26 @@ const Profile = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(user?.profilePicture || null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  
+  const [editedData, setEditedData] = useState({
+    phoneNumber: user?.phoneNumber || "",
+    occupation: user?.occupation || "student",
+    studentType: user?.studentType || "college",
+    schoolName: user?.schoolName || "",
+    className: user?.className || "",
+    section: user?.section || "",
+    classRollNo: user?.classRollNo || "",
+    parentsPhone: user?.parentsPhone || "",
+    collegeName: user?.collegeName || "",
+    universityRollNo: user?.universityRollNo || "",
+    branch: user?.branch || "",
+    collegeSection: user?.collegeSection || "",
+    collegeClassRollNo: user?.collegeClassRollNo || "",
+    companyName: user?.companyName || "",
+    locality: user?.locality || "",
+    employeeId: user?.employeeId || "",
+  });
+
   useEffect(() => {
-    // If profile isn't complete, redirect to profile completion
     if (user && !isProfileComplete) {
       navigate("/profile-completion");
     }
@@ -34,7 +53,6 @@ const Profile = () => {
       const file = e.target.files[0];
       setProfileImage(file);
       
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -43,18 +61,77 @@ const Profile = () => {
     }
   };
   
+  const handleEditChange = (name: string, value: string) => {
+    if (name === "occupation") {
+      if (value === "student") {
+        setEditedData(prev => ({
+          ...prev,
+          occupation: value,
+          studentType: "college",
+          collegeName: "",
+          universityRollNo: "",
+          branch: "",
+          collegeSection: "",
+          collegeClassRollNo: "",
+          schoolName: "",
+          className: "",
+          section: "",
+          classRollNo: "",
+          parentsPhone: "",
+          companyName: "",
+          locality: "",
+          employeeId: "",
+        }));
+      } else {
+        setEditedData(prev => ({
+          ...prev,
+          occupation: value,
+          companyName: "",
+          locality: "",
+          employeeId: "",
+          studentType: undefined,
+          schoolName: "",
+          className: "",
+          section: "",
+          classRollNo: "",
+          parentsPhone: "",
+          collegeName: "",
+          universityRollNo: "",
+          branch: "",
+          collegeSection: "",
+          collegeClassRollNo: "",
+        }));
+      }
+      return;
+    }
+    setEditedData(prev => ({ ...prev, [name]: value }));
+  };
+
   const handleSave = async () => {
     try {
       setIsLoading(true);
       setError("");
       
-      // In a real app, you would upload the image to storage
-      // and get back a URL to store in the user profile
       const profilePicture = imagePreview || undefined;
       
       await completeProfile({
-        phoneNumber,
-        profilePicture
+        phoneNumber: editedData.phoneNumber,
+        profilePicture,
+        occupation: editedData.occupation,
+        studentType: editedData.studentType,
+        schoolName: editedData.schoolName,
+        className: editedData.className,
+        section: editedData.section,
+        classRollNo: editedData.classRollNo,
+        parentsPhone: editedData.parentsPhone,
+        collegeName: editedData.collegeName,
+        universityRollNo: editedData.universityRollNo,
+        branch: editedData.branch,
+        collegeSection: editedData.collegeSection,
+        collegeClassRollNo: editedData.collegeClassRollNo,
+        companyName: editedData.companyName,
+        locality: editedData.locality,
+        employeeId: editedData.employeeId,
       });
       
       setEditing(false);
@@ -68,9 +145,27 @@ const Profile = () => {
   
   const handleCancel = () => {
     setEditing(false);
-    setPhoneNumber(user.phoneNumber || "");
+    setEditedData({
+      phoneNumber: user.phoneNumber || "",
+      occupation: user.occupation || "student",
+      studentType: user.studentType || "college",
+      schoolName: user.schoolName || "",
+      className: user.className || "",
+      section: user.section || "",
+      classRollNo: user.classRollNo || "",
+      parentsPhone: user.parentsPhone || "",
+      collegeName: user.collegeName || "",
+      universityRollNo: user.universityRollNo || "",
+      branch: user.branch || "",
+      collegeSection: user.collegeSection || "",
+      collegeClassRollNo: user.collegeClassRollNo || "",
+      companyName: user.companyName || "",
+      locality: user.locality || "",
+      employeeId: user.employeeId || "",
+    });
     setImagePreview(user.profilePicture || null);
     setProfileImage(null);
+    setError("");
   };
   
   const getOccupationText = () => {
@@ -105,8 +200,9 @@ const Profile = () => {
                 size="sm"
                 onClick={() => setEditing(true)}
               >
-                <Pencil className="h-4 w-4 mr-2" />
-                Edit
+                <span className="flex items-center gap-2">
+                  <span>Edit</span>
+                </span>
               </Button>
             ) : (
               <div className="flex space-x-2">
@@ -115,8 +211,9 @@ const Profile = () => {
                   size="sm"
                   onClick={handleCancel}
                 >
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
+                  <span className="flex items-center gap-2">
+                    <span>Cancel</span>
+                  </span>
                 </Button>
                 <Button
                   variant="default"
@@ -124,8 +221,9 @@ const Profile = () => {
                   onClick={handleSave}
                   disabled={isLoading}
                 >
-                  <Save className="h-4 w-4 mr-2" />
-                  Save
+                  <span className="flex items-center gap-2">
+                    <span>Save</span>
+                  </span>
                 </Button>
               </div>
             )}
@@ -174,9 +272,7 @@ const Profile = () => {
             
             <div className="flex-1 space-y-4">
               {error && (
-                <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">
-                  {error}
-                </div>
+                <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">{error}</div>
               )}
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -184,89 +280,267 @@ const Profile = () => {
                   <Label className="text-sm text-slate-500">Email</Label>
                   <p>{user.email}</p>
                 </div>
-                
                 <div className="space-y-1">
                   <Label className="text-sm text-slate-500">Date of Birth</Label>
-                  <p>{user.dob ? formatDate(user.dob) : 'N/A'}</p>
+                  <Input value={user.dob || "N/A"} disabled />
                 </div>
-                
                 <div className="space-y-1">
                   <Label className="text-sm text-slate-500">Gender</Label>
-                  <p className="capitalize">{user.gender}</p>
+                  <Input value={user.gender || "N/A"} disabled className="capitalize" />
                 </div>
-                
                 <div className="space-y-1">
                   <Label className="text-sm text-slate-500">Phone Number</Label>
                   {editing ? (
                     <Input
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      value={editedData.phoneNumber}
+                      onChange={(e) => handleEditChange("phoneNumber", e.target.value)}
                       placeholder="10-digit number"
                     />
                   ) : (
                     <p>{user.phoneNumber || 'N/A'}</p>
                   )}
                 </div>
-                
                 <div className="space-y-1">
-                  <Label className="text-sm text-slate-500">Organization</Label>
-                  <p>{getOrganizationText()}</p>
+                  <Label className="text-sm text-slate-500">Occupation</Label>
+                  {editing ? (
+                    <Select
+                      value={editedData.occupation}
+                      onValueChange={(value) => handleEditChange("occupation", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your occupation" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="student">Student</SelectItem>
+                        <SelectItem value="professional">Working Professional</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p>{getOccupationText()}</p>
+                  )}
                 </div>
-                
-                {user.occupation === 'student' && user.studentType === 'school' && (
+
+                {editing && editedData.occupation === 'student' && (
                   <>
                     <div className="space-y-1">
-                      <Label className="text-sm text-slate-500">Class</Label>
-                      <p>{user.className || 'N/A'}</p>
+                      <Label className="text-sm text-slate-500">Student Type</Label>
+                      <Select
+                        value={editedData.studentType}
+                        onValueChange={(value) => handleEditChange("studentType", value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select student type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="school">School Student</SelectItem>
+                          <SelectItem value="college">College Student</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                    
-                    <div className="space-y-1">
-                      <Label className="text-sm text-slate-500">Section</Label>
-                      <p>{user.section || 'N/A'}</p>
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <Label className="text-sm text-slate-500">Roll Number</Label>
-                      <p>{user.classRollNo || 'N/A'}</p>
-                    </div>
+                    {editedData.studentType === "school" && (
+                      <>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">School Name</Label>
+                          <Select
+                            value={editedData.schoolName}
+                            onValueChange={(value) => handleEditChange("schoolName", value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select school" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {schools.map((school) => (
+                                <SelectItem key={school} value={school}>
+                                  {school}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Class</Label>
+                          <Input
+                            value={editedData.className}
+                            onChange={e => handleEditChange("className", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Section</Label>
+                          <Input
+                            value={editedData.section}
+                            onChange={e => handleEditChange("section", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Roll Number</Label>
+                          <Input
+                            value={editedData.classRollNo}
+                            onChange={e => handleEditChange("classRollNo", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Parent's Phone (Optional)</Label>
+                          <Input
+                            value={editedData.parentsPhone}
+                            onChange={e => handleEditChange("parentsPhone", e.target.value)}
+                          />
+                        </div>
+                      </>
+                    )}
+                    {editedData.studentType === "college" && (
+                      <>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">College Name</Label>
+                          <Select
+                            value={editedData.collegeName}
+                            onValueChange={(value) => handleEditChange("collegeName", value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select college" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {colleges.map((college) => (
+                                <SelectItem key={college} value={college}>
+                                  {college}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">University Roll No.</Label>
+                          <Input
+                            value={editedData.universityRollNo}
+                            onChange={e => handleEditChange("universityRollNo", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Branch</Label>
+                          <Input
+                            value={editedData.branch}
+                            onChange={e => handleEditChange("branch", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Section</Label>
+                          <Input
+                            value={editedData.collegeSection}
+                            onChange={e => handleEditChange("collegeSection", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Class Roll No.</Label>
+                          <Input
+                            value={editedData.collegeClassRollNo}
+                            onChange={e => handleEditChange("collegeClassRollNo", e.target.value)}
+                          />
+                        </div>
+                      </>
+                    )}
                   </>
                 )}
-                
-                {user.occupation === 'student' && user.studentType === 'college' && (
+                {editing && editedData.occupation === "professional" && (
                   <>
                     <div className="space-y-1">
-                      <Label className="text-sm text-slate-500">University Roll No.</Label>
-                      <p>{user.universityRollNo || 'N/A'}</p>
+                      <Label className="text-sm text-slate-500">Company Name</Label>
+                      <Select
+                        value={editedData.companyName}
+                        onValueChange={(value) => handleEditChange("companyName", value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select company" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {companies.map((company) => (
+                            <SelectItem key={company} value={company}>
+                              {company}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                    
-                    <div className="space-y-1">
-                      <Label className="text-sm text-slate-500">Branch</Label>
-                      <p>{user.branch || 'N/A'}</p>
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <Label className="text-sm text-slate-500">Section</Label>
-                      <p>{user.collegeSection || 'N/A'}</p>
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <Label className="text-sm text-slate-500">Roll Number</Label>
-                      <p>{user.collegeClassRollNo || 'N/A'}</p>
-                    </div>
-                  </>
-                )}
-                
-                {user.occupation === 'professional' && (
-                  <>
                     <div className="space-y-1">
                       <Label className="text-sm text-slate-500">Locality</Label>
-                      <p>{user.locality || 'N/A'}</p>
+                      <Select
+                        value={editedData.locality}
+                        onValueChange={(value) => handleEditChange("locality", value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select locality" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {localities.map((loc) => (
+                            <SelectItem key={loc} value={loc}>
+                              {loc}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                    
                     <div className="space-y-1">
                       <Label className="text-sm text-slate-500">Employee ID</Label>
-                      <p>{user.employeeId || 'N/A'}</p>
+                      <Input
+                        value={editedData.employeeId}
+                        onChange={e => handleEditChange("employeeId", e.target.value)}
+                      />
                     </div>
+                  </>
+                )}
+
+                {!editing && (
+                  <>
+                    <div className="space-y-1">
+                      <Label className="text-sm text-slate-500">Organization</Label>
+                      <p>{getOrganizationText()}</p>
+                    </div>
+                    {user.occupation === 'student' && user.studentType === 'school' && (
+                      <>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Class</Label>
+                          <p>{user.className || 'N/A'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Section</Label>
+                          <p>{user.section || 'N/A'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Roll Number</Label>
+                          <p>{user.classRollNo || 'N/A'}</p>
+                        </div>
+                      </>
+                    )}
+                    {user.occupation === 'student' && user.studentType === 'college' && (
+                      <>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">University Roll No.</Label>
+                          <p>{user.universityRollNo || 'N/A'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Branch</Label>
+                          <p>{user.branch || 'N/A'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Section</Label>
+                          <p>{user.collegeSection || 'N/A'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Roll Number</Label>
+                          <p>{user.collegeClassRollNo || 'N/A'}</p>
+                        </div>
+                      </>
+                    )}
+                    {user.occupation === 'professional' && (
+                      <>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Locality</Label>
+                          <p>{user.locality || 'N/A'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-sm text-slate-500">Employee ID</Label>
+                          <p>{user.employeeId || 'N/A'}</p>
+                        </div>
+                      </>
+                    )}
                   </>
                 )}
               </div>

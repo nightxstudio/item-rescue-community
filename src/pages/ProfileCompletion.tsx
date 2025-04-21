@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -12,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { UserProfile, UserOccupation, Gender, StudentType } from "@/types";
 import { isValidName, isValidPhoneNumber } from "@/utils/validation";
 import { ArrowRight } from "lucide-react";
+import { colleges, companies, schools, localities } from "@/data/organizationData";
 
 const ProfileCompletion = () => {
   const navigate = useNavigate();
@@ -46,7 +46,6 @@ const ProfileCompletion = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(user?.profilePicture || null);
   
   useEffect(() => {
-    // Redirect to dashboard if profile is already complete
     if (isProfileComplete) {
       navigate("/profile");
     }
@@ -131,6 +130,48 @@ const ProfileCompletion = () => {
   };
   
   const handleSelectChange = (name: string, value: string) => {
+    if (name === "occupation") {
+      if (value === "student") {
+        setFormData(prev => ({
+          ...prev,
+          occupation: value as UserOccupation,
+          studentType: "college",
+          collegeName: "",
+          universityRollNo: "",
+          branch: "",
+          collegeSection: "",
+          collegeClassRollNo: "",
+          schoolName: "",
+          className: "",
+          section: "",
+          classRollNo: "",
+          parentsPhone: "",
+          companyName: "",
+          locality: "",
+          employeeId: "",
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          occupation: value as UserOccupation,
+          companyName: "",
+          locality: "",
+          employeeId: "",
+          studentType: undefined,
+          schoolName: "",
+          className: "",
+          section: "",
+          classRollNo: "",
+          parentsPhone: "",
+          collegeName: "",
+          universityRollNo: "",
+          branch: "",
+          collegeSection: "",
+          collegeClassRollNo: "",
+        }));
+      }
+      return;
+    }
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
@@ -139,7 +180,6 @@ const ProfileCompletion = () => {
       const file = e.target.files[0];
       setProfileImage(file);
       
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -162,8 +202,6 @@ const ProfileCompletion = () => {
     try {
       setIsLoading(true);
       
-      // In a real app, you would upload the image to storage
-      // and get back a URL to store in the user profile
       const profilePicture = imagePreview || undefined;
       
       await completeProfile({
@@ -238,6 +276,7 @@ const ProfileCompletion = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     className={errors.name ? "border-destructive" : ""}
+                    disabled
                   />
                   {errors.name && (
                     <p className="text-sm text-destructive">{errors.name}</p>
@@ -253,6 +292,7 @@ const ProfileCompletion = () => {
                     value={formData.dob}
                     onChange={handleInputChange}
                     className={errors.dob ? "border-destructive" : ""}
+                    disabled
                   />
                   {errors.dob && (
                     <p className="text-sm text-destructive">{errors.dob}</p>
@@ -265,6 +305,7 @@ const ProfileCompletion = () => {
                     value={formData.gender}
                     onValueChange={(value) => handleSelectChange("gender", value as Gender)}
                     className="flex space-x-4"
+                    disabled
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="male" id="male" />
@@ -348,19 +389,25 @@ const ProfileCompletion = () => {
                         <TabsContent value="school" className="mt-0 space-y-4">
                           <div className="space-y-2">
                             <Label htmlFor="schoolName">School Name</Label>
-                            <Input
-                              id="schoolName"
-                              name="schoolName"
-                              placeholder="Enter school name"
+                            <Select
                               value={formData.schoolName}
-                              onChange={handleInputChange}
-                              className={errors.schoolName ? "border-destructive" : ""}
-                            />
+                              onValueChange={(value) => handleSelectChange("schoolName", value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select school" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {schools.map((school) => (
+                                  <SelectItem key={school} value={school}>
+                                    {school}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                             {errors.schoolName && (
                               <p className="text-sm text-destructive">{errors.schoolName}</p>
                             )}
                           </div>
-                          
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                               <Label htmlFor="className">Class</Label>
@@ -427,14 +474,21 @@ const ProfileCompletion = () => {
                         <TabsContent value="college" className="mt-0 space-y-4">
                           <div className="space-y-2">
                             <Label htmlFor="collegeName">College Name</Label>
-                            <Input
-                              id="collegeName"
-                              name="collegeName"
-                              placeholder="Enter college name"
+                            <Select
                               value={formData.collegeName}
-                              onChange={handleInputChange}
-                              className={errors.collegeName ? "border-destructive" : ""}
-                            />
+                              onValueChange={(value) => handleSelectChange("collegeName", value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select college" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {colleges.map((college) => (
+                                  <SelectItem key={college} value={college}>
+                                    {college}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                             {errors.collegeName && (
                               <p className="text-sm text-destructive">{errors.collegeName}</p>
                             )}
@@ -511,14 +565,21 @@ const ProfileCompletion = () => {
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="companyName">Company Name</Label>
-                      <Input
-                        id="companyName"
-                        name="companyName"
-                        placeholder="Enter company name"
+                      <Select
                         value={formData.companyName}
-                        onChange={handleInputChange}
-                        className={errors.companyName ? "border-destructive" : ""}
-                      />
+                        onValueChange={(value) => handleSelectChange("companyName", value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select company" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {companies.map((company) => (
+                            <SelectItem key={company} value={company}>
+                              {company}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       {errors.companyName && (
                         <p className="text-sm text-destructive">{errors.companyName}</p>
                       )}
@@ -526,14 +587,21 @@ const ProfileCompletion = () => {
                     
                     <div className="space-y-2">
                       <Label htmlFor="locality">Locality</Label>
-                      <Input
-                        id="locality"
-                        name="locality"
-                        placeholder="e.g., Downtown"
+                      <Select
                         value={formData.locality}
-                        onChange={handleInputChange}
-                        className={errors.locality ? "border-destructive" : ""}
-                      />
+                        onValueChange={(value) => handleSelectChange("locality", value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select locality" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {localities.map((loc) => (
+                            <SelectItem key={loc} value={loc}>
+                              {loc}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       {errors.locality && (
                         <p className="text-sm text-destructive">{errors.locality}</p>
                       )}
