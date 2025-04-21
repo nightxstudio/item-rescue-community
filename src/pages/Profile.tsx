@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatDate } from "@/utils/validation";
 import { Pencil, Save, X } from "lucide-react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { toast } from "sonner";
 import { UserOccupation, StudentType } from "@/types";
 
 import { colleges, companies, schools, localities } from "@/data/organizationData";
@@ -45,6 +45,29 @@ const Profile = () => {
   useEffect(() => {
     if (user && !isProfileComplete) {
       navigate("/profile-completion");
+    }
+    
+    if (user) {
+      setEditedData({
+        name: user.name || "",
+        phoneNumber: user.phoneNumber || "",
+        occupation: user.occupation || "student",
+        studentType: user.studentType || "college",
+        schoolName: user.schoolName || "",
+        className: user.className || "",
+        section: user.section || "",
+        classRollNo: user.classRollNo || "",
+        parentsPhone: user.parentsPhone || "",
+        collegeName: user.collegeName || "",
+        universityRollNo: user.universityRollNo || "",
+        branch: user.branch || "",
+        collegeSection: user.collegeSection || "",
+        collegeClassRollNo: user.collegeClassRollNo || "",
+        companyName: user.companyName || "",
+        locality: user.locality || "",
+        employeeId: user.employeeId || "",
+      });
+      setImagePreview(user.profilePicture || null);
     }
   }, [user, isProfileComplete, navigate]);
   
@@ -137,10 +160,22 @@ const Profile = () => {
         employeeId: editedData.employeeId,
       });
       
+      toast.success("Profile updated successfully", {
+        description: "Your changes have been saved.",
+        position: "bottom-center",
+        duration: 3000,
+        className: "animate-in fade-in-50 duration-300",
+      });
+      
       setEditing(false);
     } catch (error) {
       console.error("Update failed:", error);
       setError("Failed to update profile. Please try again.");
+      toast.error("Profile update failed", {
+        description: "There was a problem saving your changes.",
+        position: "bottom-center",
+        duration: 3000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -442,7 +477,7 @@ const Profile = () => {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-sm text-slate-500">Class Roll No.</Label>
+                          <Label className="text-sm text-slate-500">Roll Number</Label>
                           <Input
                             value={editedData.collegeClassRollNo}
                             onChange={e => handleEditChange("collegeClassRollNo", e.target.value)}
