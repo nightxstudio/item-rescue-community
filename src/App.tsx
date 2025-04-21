@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,7 @@ import DevelopersDesk from "./pages/DevelopersDesk";
 import FAQ from "./pages/FAQ";
 import DeleteAccount from "./pages/DeleteAccount";
 import NotFound from "./pages/NotFound";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -95,6 +95,14 @@ const App = () => (
                       <DeleteAccount />
                     </ProtectedRoute>
                   } 
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
                 />
               </Route>
               

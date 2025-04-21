@@ -7,7 +7,8 @@ import {
   LayoutDashboard, 
   FileSearch, 
   Info, 
-  HelpCircle, 
+  HelpCircle,
+  Settings,
   Trash2
 } from "lucide-react";
 
@@ -20,7 +21,8 @@ type SidebarLink = {
 const Sidebar = () => {
   const { user } = useAuth();
   const location = useLocation();
-  
+
+  // Main links (excluding delete)
   const links: SidebarLink[] = [
     {
       name: "Profile",
@@ -48,9 +50,9 @@ const Sidebar = () => {
       icon: HelpCircle
     },
     {
-      name: "Delete Account",
-      href: "/delete-account",
-      icon: Trash2
+      name: "Settings",
+      href: "/settings",
+      icon: Settings
     }
   ];
 
@@ -95,6 +97,7 @@ const Sidebar = () => {
           )}
         </div>
 
+        {/* Main navigation */}
         <nav className="flex-1">
           <ul className="space-y-1">
             {links.map((link) => (
@@ -115,6 +118,18 @@ const Sidebar = () => {
             ))}
           </ul>
         </nav>
+      </div>
+      {/* Move Delete Account to the bottom, red styling */}
+      <div className="p-4">
+        <Link
+          to="/delete-account"
+          className={cn(
+            "flex items-center w-full px-4 py-3 text-sm font-medium rounded-md bg-red-600 text-white hover:bg-red-700 transition-all"
+          )}
+        >
+          <Trash2 className="w-5 h-5 mr-3" />
+          Delete Account
+        </Link>
       </div>
     </aside>
   );

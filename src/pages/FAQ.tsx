@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
@@ -66,7 +65,7 @@ const faqItems: FAQItem[] = [
 const FAQ = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  
+
   const categories = [
     { id: "general", name: "General Questions" },
     { id: "lost", name: "Lost Items" },
@@ -74,21 +73,18 @@ const FAQ = () => {
     { id: "account", name: "Account Management" },
     { id: "privacy", name: "Privacy & Security" }
   ];
-  
+
   const filteredFAQs = faqItems.filter(item => {
     const matchesSearch = searchQuery === "" || 
       item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.answer.toLowerCase().includes(searchQuery.toLowerCase());
-    
     const matchesCategory = activeCategory === null || item.category === activeCategory;
-    
     return matchesSearch && matchesCategory;
   });
-  
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Frequently Asked Questions</h1>
-      
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
         <Input
@@ -98,26 +94,24 @@ const FAQ = () => {
           className="pl-10"
         />
       </div>
-      
       <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => setActiveCategory(null)}
           className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
             activeCategory === null
-              ? "bg-primary text-white"
+              ? "bg-primary text-white ring-2 ring-primary"
               : "bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
           }`}
         >
           All
         </button>
-        
         {categories.map(category => (
           <button
             key={category.id}
             onClick={() => setActiveCategory(category.id)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               activeCategory === category.id
-                ? "bg-primary text-white"
+                ? "bg-primary text-white ring-2 ring-primary"
                 : "bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
             }`}
           >
@@ -125,7 +119,6 @@ const FAQ = () => {
           </button>
         ))}
       </div>
-      
       {filteredFAQs.length === 0 ? (
         <div className="py-12 text-center">
           <h3 className="text-xl font-medium mb-2">No FAQs match your search</h3>

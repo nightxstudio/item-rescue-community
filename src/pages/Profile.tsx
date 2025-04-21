@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -24,6 +23,7 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [editedData, setEditedData] = useState({
+    name: user?.name || "",
     phoneNumber: user?.phoneNumber || "",
     occupation: user?.occupation || "student",
     studentType: user?.studentType || "college",
@@ -117,6 +117,7 @@ const Profile = () => {
       const profilePicture = imagePreview || undefined;
       
       await completeProfile({
+        name: editedData.name,
         phoneNumber: editedData.phoneNumber,
         profilePicture,
         occupation: editedData.occupation,
@@ -148,6 +149,7 @@ const Profile = () => {
   const handleCancel = () => {
     setEditing(false);
     setEditedData({
+      name: user.name || "",
       phoneNumber: user.phoneNumber || "",
       occupation: user.occupation || "student",
       studentType: user.studentType || "college",
@@ -266,7 +268,16 @@ const Profile = () => {
                   onChange={handleImageChange}
                 />
               )}
-              <h2 className="text-xl font-semibold">{user.name}</h2>
+              {editing ? (
+                <Input
+                  value={editedData.name}
+                  onChange={e => handleEditChange("name", e.target.value)}
+                  placeholder="Your name"
+                  className="font-semibold text-xl text-center"
+                />
+              ) : (
+                <h2 className="text-xl font-semibold">{user.name}</h2>
+              )}
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 {getOccupationText()}
               </p>

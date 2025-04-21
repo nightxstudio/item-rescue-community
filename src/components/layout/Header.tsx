@@ -16,7 +16,7 @@ const Header = () => {
           to="/" 
           className="text-2xl font-bold text-primary transition-transform hover:scale-105 duration-200"
         >
-          Lost<span className="text-slate-800 dark:text-white">&</span>Found
+          Lost And Found Department
         </Link>
         
         <div className="flex items-center gap-4">
