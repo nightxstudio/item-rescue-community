@@ -47,8 +47,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           } else if (profile) {
             // Set user with profile data
             setUser({ 
-              ...profile,
-              email: session.user.email || ""
+              uid: session.user.id,
+              email: session.user.email || "",
+              name: profile.name || "",
+              dob: profile.dob || "",
+              gender: profile.gender as UserProfile['gender'] || "male",
+              phoneNumber: profile.phone_number || "",
+              profilePicture: profile.profile_picture || "",
+              occupation: profile.occupation as UserProfile['occupation'] || "student",
+              studentType: profile.student_type as UserProfile['studentType'],
+              schoolName: profile.school_name || "",
+              className: profile.class_name || "",
+              section: profile.section || "",
+              classRollNo: profile.class_roll_no || "",
+              parentsPhone: profile.parents_phone || "",
+              collegeName: profile.college_name || "",
+              universityRollNo: profile.university_roll_no || "",
+              branch: profile.branch || "",
+              collegeSection: profile.college_section || "",
+              collegeClassRollNo: profile.college_class_roll_no || "",
+              companyName: profile.company_name || "",
+              locality: profile.locality || "",
+              employeeId: profile.employee_id || ""
             });
           }
         }
@@ -79,13 +99,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setUser(null);
           } else if (profile) {
             setUser({
-              ...profile,
+              uid: session.user.id,
               email: session.user.email || "",
+              name: profile.name || "",
+              dob: profile.dob || "",
+              gender: profile.gender as UserProfile['gender'] || "male",
+              phoneNumber: profile.phone_number || "",
+              profilePicture: profile.profile_picture || "",
+              occupation: profile.occupation as UserProfile['occupation'] || "student",
+              studentType: profile.student_type as UserProfile['studentType'],
+              schoolName: profile.school_name || "",
+              className: profile.class_name || "",
+              section: profile.section || "",
+              classRollNo: profile.class_roll_no || "",
+              parentsPhone: profile.parents_phone || "",
+              collegeName: profile.college_name || "",
+              universityRollNo: profile.university_roll_no || "",
+              branch: profile.branch || "",
+              collegeSection: profile.college_section || "",
+              collegeClassRollNo: profile.college_class_roll_no || "",
+              companyName: profile.company_name || "",
+              locality: profile.locality || "",
+              employeeId: profile.employee_id || ""
             });
           } else {
             // Create a new profile if one doesn't exist
-            const newProfile = {
-              id: session.user.id,
+            const newUser: UserProfile = {
+              uid: session.user.id,
               email: session.user.email || "",
               name: "",
               dob: "",
@@ -94,6 +134,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               occupation: "student",
             };
             
+            // Insert basic profile
             const { error: insertError } = await supabase
               .from('profiles')
               .insert([{ 
@@ -106,7 +147,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             if (insertError) {
               console.error("Error creating profile:", insertError);
             } else {
-              setUser(newProfile);
+              setUser(newUser);
             }
           }
         } else if (event === 'SIGNED_OUT') {
@@ -220,7 +261,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setIsLoading(true);
       
-      if (!user?.id) {
+      if (!user?.uid) {
         throw new Error("User not authenticated");
       }
       
@@ -249,7 +290,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           locality: profile.locality,
           employee_id: profile.employeeId
         })
-        .eq('id', user.id);
+        .eq('id', user.uid);
         
       if (error) throw error;
       

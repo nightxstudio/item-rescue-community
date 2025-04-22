@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -12,10 +13,11 @@ import { UserProfile, UserOccupation, Gender, StudentType } from "@/types";
 import { isValidName, isValidPhoneNumber } from "@/utils/validation";
 import { ArrowRight } from "lucide-react";
 import { colleges, companies, schools, localities } from "@/data/organizationData";
+import { toast } from "sonner";
 
 const ProfileCompletion = () => {
   const navigate = useNavigate();
-  const { user, completeProfile, isProfileComplete } = useAuth();
+  const { user, completeProfile, isProfileComplete, isLoading: authLoading } = useAuth();
   
   const [formData, setFormData] = useState<Partial<UserProfile>>({
     name: user?.name || "",
@@ -209,6 +211,11 @@ const ProfileCompletion = () => {
         profilePicture
       });
       
+      toast.success("Profile completed successfully!", {
+        duration: 3000,
+        className: "animate-in slide-in-from-top-5 duration-300",
+      });
+      
       navigate("/profile");
     } catch (error) {
       console.error("Profile completion failed:", error);
@@ -230,7 +237,12 @@ const ProfileCompletion = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {step === 1 ? (
+          {isLoading || authLoading ? (
+            <div className="flex justify-center items-center py-10">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+              <p className="ml-3 text-primary">Processing...</p>
+            </div>
+          ) : step === 1 ? (
             <div className="space-y-6">
               <div className="flex flex-col items-center justify-center space-y-4">
                 <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-primary bg-secondary">
@@ -276,7 +288,6 @@ const ProfileCompletion = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     className={errors.name ? "border-destructive" : ""}
-                    disabled
                   />
                   {errors.name && (
                     <p className="text-sm text-destructive">{errors.name}</p>
@@ -292,7 +303,6 @@ const ProfileCompletion = () => {
                     value={formData.dob}
                     onChange={handleInputChange}
                     className={errors.dob ? "border-destructive" : ""}
-                    disabled
                   />
                   {errors.dob && (
                     <p className="text-sm text-destructive">{errors.dob}</p>
@@ -305,7 +315,6 @@ const ProfileCompletion = () => {
                     value={formData.gender}
                     onValueChange={(value) => handleSelectChange("gender", value as Gender)}
                     className="flex space-x-4"
-                    disabled
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="male" id="male" />
@@ -342,6 +351,7 @@ const ProfileCompletion = () => {
                 type="button"
                 className="w-full"
                 onClick={handleNextStep}
+                disabled={isLoading}
               >
                 Continue
                 <ArrowRight className="ml-2 h-4 w-4" />
