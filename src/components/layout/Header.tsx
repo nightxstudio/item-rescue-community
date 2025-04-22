@@ -1,19 +1,28 @@
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, LogOut } from "lucide-react";
 
 const Header = () => {
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, isProfileComplete } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (isLoggedIn && isProfileComplete) {
+      e.preventDefault();
+      navigate("/lost-items"); // Navigate to dashboard/lost-items
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-200">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link 
-          to="/" 
+          to={isLoggedIn && isProfileComplete ? "/lost-items" : "/"} 
+          onClick={handleLogoClick}
           className="text-2xl font-bold text-primary transition-transform hover:scale-105 duration-200"
         >
           Lost And Found Department

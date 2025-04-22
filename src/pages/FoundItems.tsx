@@ -98,7 +98,7 @@ const FoundItems = () => {
       const { error } = await supabase
         .from('found_items')
         .insert([{
-          created_by: user.id,
+          created_by: user.uid, // Using uid instead of id
           location,
           description,
           image: imageUrl,
@@ -133,12 +133,12 @@ const FoundItems = () => {
         .order('created_at', { ascending: false });
         
       setFoundItems(newData || []);
+      setIsSubmitting(false);
     } catch (error) {
       console.error("Error reporting found item:", error);
       toast.error("Failed to report item", {
         description: "There was a problem saving your report.",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
