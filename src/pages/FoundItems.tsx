@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,39 +8,28 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 const FoundItems = () => {
   const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [foundItems, setFoundItems] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Fetch found items
-  useEffect(() => {
-    const fetchFoundItems = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('found_items')
-          .select('*')
-          .order('created_at', { ascending: false });
-          
-        if (error) {
-          console.error("Error fetching found items:", error);
-          return;
-        }
+  
+  const { data: foundItems = [], isLoading } = useQuery({
+    queryKey: ['foundItems'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('found_items')
+        .select('*')
+        .order('created_at', { ascending: false });
         
-        setFoundItems(data || []);
-      } catch (error) {
-        console.error("Error fetching found items:", error);
-      }
-    };
-    
-    fetchFoundItems();
-  }, []);
+      if (error) throw error;
+      return data || [];
+    }
+  });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -125,13 +115,11 @@ const FoundItems = () => {
         className: "animate-in slide-in-from-bottom-5 duration-300",
       });
       
-      // Refresh found items list
-      const { data: newData } = await supabase
-        .from('found_items')
-        .select('*')
-        .order('created_at', { ascending: false });
-        
-      setFoundItems(newData || []);
+      // Refresh query cache to show updated data
+      // We could use queryClient.invalidateQueries() here if we had access to queryClient
+      // For now, this reload approach works
+      window.location.reload();
+      
       setIsSubmitting(false);
     } catch (error) {
       console.error("Error reporting found item:", error);
@@ -141,19 +129,6 @@ const FoundItems = () => {
       setIsSubmitting(false);
     }
   };
-
-  const { data: foundItems = [], isLoading } = useQuery({
-    queryKey: ['foundItems'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('found_items')
-        .select('*')
-        .order('created_at', { ascending: false });
-        
-      if (error) throw error;
-      return data || [];
-    }
-  });
 
   const claimedItems = foundItems.filter(item => item.claimed_by);
   const unclaimedItems = foundItems.filter(item => !item.claimed_by);
@@ -244,7 +219,11 @@ const FoundItems = () => {
       
       <div>
         <h2 className="text-2xl font-bold mb-4">My Found Items</h2>
-        {unclaimedItems.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          </div>
+        ) : unclaimedItems.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             No found items reported yet.
           </div>

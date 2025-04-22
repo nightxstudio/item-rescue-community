@@ -10,6 +10,7 @@ import { LostItem } from "@/types";
 import { Image, Plus, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { formatDate } from "@/utils/dateUtils";
 
 // Mock data for lost items
 const mockLostItems: LostItem[] = [
@@ -409,7 +410,7 @@ const LostItems = () => {
                         {item.category}
                       </div>
                       <div className="text-xs text-slate-500">
-                        Lost on {formatDate(item.lostDate)}
+                        Lost on {formatDate(item.lost_date)}
                       </div>
                     </div>
                     <p className="text-sm line-clamp-3 mb-3">
