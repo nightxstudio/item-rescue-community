@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
@@ -29,9 +28,14 @@ const Sidebar = () => {
       icon: User
     },
     {
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: LayoutDashboard
+    },
+    {
       name: "Lost Items",
       href: "/lost-items",
-      icon: LayoutDashboard
+      icon: FileSearch
     },
     {
       name: "Found Items",

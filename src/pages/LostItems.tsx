@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { LostItem } from "@/types";
 import { Image, Plus, Search } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 // Mock data for lost items
 const mockLostItems: LostItem[] = [
@@ -77,9 +79,22 @@ const LostItems = () => {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const { data: lostItems = [], isLoading: isLostItemsLoading } = useQuery({
+    queryKey: ['lostItems'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('lost_items')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      return data || [];
+    }
+  });
   
   // Filter lost items based on search query and category
-  const filteredLostItems = mockLostItems.filter(item => {
+  const filteredLostItems = lostItems.filter(item => {
     const matchesSearch = searchQuery === "" || 
       item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.category.toLowerCase().includes(searchQuery.toLowerCase());

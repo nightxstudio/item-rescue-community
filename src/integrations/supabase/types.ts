@@ -11,6 +11,8 @@ export type Database = {
     Tables: {
       found_items: {
         Row: {
+          claimed_at: string | null
+          claimed_by: string | null
           created_at: string | null
           created_by: string | null
           description: string | null
@@ -21,6 +23,8 @@ export type Database = {
           organization_type: string | null
         }
         Insert: {
+          claimed_at?: string | null
+          claimed_by?: string | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
@@ -31,6 +35,8 @@ export type Database = {
           organization_type?: string | null
         }
         Update: {
+          claimed_at?: string | null
+          claimed_by?: string | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
@@ -49,6 +55,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      lost_items: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          image: string | null
+          lost_date: string | null
+          organization: string | null
+          organization_type: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image?: string | null
+          lost_date?: string | null
+          organization?: string | null
+          organization_type?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image?: string | null
+          lost_date?: string | null
+          organization?: string | null
+          organization_type?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {

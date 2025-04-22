@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -143,6 +142,22 @@ const FoundItems = () => {
     }
   };
 
+  const { data: foundItems = [], isLoading } = useQuery({
+    queryKey: ['foundItems'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('found_items')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
+  const claimedItems = foundItems.filter(item => item.claimed_by);
+  const unclaimedItems = foundItems.filter(item => !item.claimed_by);
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Report Found Items</h1>
@@ -227,36 +242,68 @@ const FoundItems = () => {
         </CardContent>
       </Card>
       
-      <h2 className="text-2xl font-bold mt-8">Recent Found Items</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {foundItems.length > 0 ? (
-          foundItems.map((item) => (
-            <Card key={item.id} className="overflow-hidden">
-              {item.image && (
-                <div className="h-48 overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt="Found item"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              <CardContent className="p-4">
-                <div className="font-medium">Location: {item.location}</div>
-                <p className="text-sm text-gray-500 mt-1">{item.description}</p>
-                <div className="text-xs text-gray-400 mt-2">
-                  Reported {new Date(item.created_at).toLocaleDateString()}
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-8 text-gray-500">
+      <div>
+        <h2 className="text-2xl font-bold mb-4">My Found Items</h2>
+        {unclaimedItems.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
             No found items reported yet.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {unclaimedItems.map((item) => (
+              <Card key={item.id} className="overflow-hidden">
+                {item.image && (
+                  <div className="h-48 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt="Found item"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <CardContent className="p-4">
+                  <div className="font-medium">Location: {item.location}</div>
+                  <p className="text-sm text-gray-500 mt-1">{item.description}</p>
+                  <div className="text-xs text-gray-400 mt-2">
+                    Reported {new Date(item.created_at).toLocaleDateString()}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
       </div>
+
+      {claimedItems.length > 0 && (
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Claimed by Others</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {claimedItems.map((item) => (
+              <Card key={item.id} className="overflow-hidden">
+                {item.image && (
+                  <div className="h-48 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt="Found item"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <CardContent className="p-4">
+                  <div className="font-medium">Location: {item.location}</div>
+                  <p className="text-sm text-gray-500 mt-1">{item.description}</p>
+                  <div className="text-xs text-gray-400 mt-2">
+                    Reported {new Date(item.created_at).toLocaleDateString()}
+                  </div>
+                  <div className="text-xs text-green-500 mt-2">
+                    Claimed
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
