@@ -1,11 +1,12 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
-import { 
-  User, 
-  LayoutDashboard, 
-  FileSearch, 
-  Info, 
+import {
+  User,
+  LayoutDashboard,
+  FileSearch,
+  Info,
   HelpCircle,
   Settings,
   Trash2
@@ -62,15 +63,15 @@ const Sidebar = () => {
   if (!user) return null;
 
   return (
-    <aside className="hidden md:flex flex-col w-64 h-screen bg-sidebar dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 fixed left-0 top-0 z-40 pt-16">
+    <aside className="flex flex-col w-64 h-screen bg-sidebar dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 fixed left-0 top-0 z-40 pt-16">
       <div className="flex flex-col flex-grow p-4 overflow-y-auto">
         <div className="flex items-center justify-center mb-6 mt-4">
           <div className="relative">
             <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary">
               {user.profilePicture ? (
-                <img 
-                  src={user.profilePicture} 
-                  alt={user.name} 
+                <img
+                  src={user.profilePicture}
+                  alt={user.name}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -83,16 +84,16 @@ const Sidebar = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="text-center mb-6">
           <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
             {user.name || "Complete your profile"}
           </h3>
           {user.occupation && (
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              {user.occupation === 'student' 
-                ? user.studentType === 'school' 
-                  ? 'School Student' 
+              {user.occupation === 'student'
+                ? user.studentType === 'school'
+                  ? 'School Student'
                   : 'College Student'
                 : 'Working Professional'
               }
@@ -121,10 +122,14 @@ const Sidebar = () => {
           </ul>
         </nav>
       </div>
-      <div className="p-4 mt-auto">
+      <div className="p-4 mt-auto w-full">
         <Link
           to="/delete-account"
-          className="flex items-center w-full px-4 py-3 text-sm font-medium rounded-md bg-red-600 text-white hover:bg-red-700 transition-all"
+          className={cn(
+            "flex items-center w-full px-4 py-3 text-sm font-medium rounded-md transition-all " +
+            "bg-red-600 text-white hover:bg-red-700"
+          )}
+          style={{ minWidth: 0, width: "100%" }}
         >
           <Trash2 className="w-5 h-5 mr-3" />
           Delete Account

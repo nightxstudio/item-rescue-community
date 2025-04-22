@@ -1,34 +1,71 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, LogOut } from "lucide-react";
+import { Moon, Sun, LogOut, Menu } from "lucide-react";
+import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import Sidebar from "./Sidebar";
 
 const Header = () => {
   const { isLoggedIn, logout, isProfileComplete } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleLogoClick = (e: React.MouseEvent) => {
     if (isLoggedIn && isProfileComplete) {
       e.preventDefault();
-      navigate("/lost-items"); // Navigate to dashboard/lost-items
+      navigate("/lost-items");
     }
   };
+
+  const showHamburger =
+    isMobile && isLoggedIn && isProfileComplete;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-200">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link 
-          to={isLoggedIn && isProfileComplete ? "/lost-items" : "/"} 
+        <Link
+          to={isLoggedIn && isProfileComplete ? "/lost-items" : "/"}
           onClick={handleLogoClick}
-          className="text-2xl font-bold text-primary transition-transform hover:scale-105 duration-200"
+          className={
+            "font-bold text-primary transition-transform hover:scale-105 duration-200 " +
+            "truncate " +
+            "select-none " +
+            (isMobile
+              ? "text-lg"
+              : "text-2xl")
+          }
+          style={{
+            maxWidth: "80vw",
+          }}
         >
           Lost And Found Department
         </Link>
-        
+
         <div className="flex items-center gap-4">
+          {showHamburger && (
+            <>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="rounded-full block md:hidden"
+                aria-label="Open navigation"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <Menu className="h-7 w-7" />
+              </Button>
+              <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+                <SheetContent side="left" className="p-0 w-64 bg-sidebar dark:bg-slate-900">
+                  <Sidebar />
+                </SheetContent>
+              </Sheet>
+            </>
+          )}
           {isLoggedIn ? (
             <div className="flex items-center gap-3">
               <Button
@@ -44,7 +81,7 @@ const Header = () => {
                   <Sun className="h-5 w-5" />
                 )}
               </Button>
-              
+
               <Button
                 variant="ghost"
                 size="icon"
