@@ -1,4 +1,3 @@
-
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
@@ -9,7 +8,8 @@ import {
   Info,
   HelpCircle,
   Settings,
-  Trash2
+  Trash2,
+  Coffee
 } from "lucide-react";
 import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet";
 import { useEffect } from "react";
@@ -56,6 +56,11 @@ const Sidebar = ({ isOpen, onOpenChange, isMobile = false }: SidebarProps) => {
       name: "Developer's Desk",
       href: "/developers-desk",
       icon: Info
+    },
+    {
+      name: "Donate",
+      href: "https://www.buymeacoffee.com/developer",
+      icon: Coffee
     },
     {
       name: "FAQ",

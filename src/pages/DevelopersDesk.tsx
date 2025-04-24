@@ -1,9 +1,11 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Github, Linkedin, Mail, Twitter } from "lucide-react";
+import { Coffee, Github, Linkedin, Mail, Twitter, MessageSquare } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 const DevelopersDesk = () => {
+  const { theme } = useTheme();
+  
   return (
     <div className="space-y-8">
       <div className="text-center max-w-3xl mx-auto">
@@ -19,9 +21,9 @@ const DevelopersDesk = () => {
             <div className="p-8 flex items-center justify-center">
               <div className="w-48 h-48 rounded-full border-4 border-white dark:border-slate-800 shadow-xl overflow-hidden bg-white dark:bg-slate-800">
                 <img 
-                  src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=400&q=80" 
+                  src={theme === 'dark' ? '/Assets/Image-Assets/DeveloperDesk/DarkModeTransparant.png' : '/Assets/Image-Assets/DeveloperDesk/LightModeTransparant.png'}
                   alt="Developer" 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>
@@ -58,6 +60,55 @@ const DevelopersDesk = () => {
           </div>
         </CardContent>
       </Card>
+      
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-gradient-to-br from-[#9b87f5]/20 to-[#7E69AB]/20 border-none shadow-xl p-6">
+          <h2 className="text-2xl font-bold mb-4 text-center">Support the Project</h2>
+          <div className="text-center space-y-4">
+            <p className="text-lg text-slate-700 dark:text-slate-300">
+              If you find this project helpful, consider supporting its development.
+              Your support helps maintain and improve the platform!
+            </p>
+            <Button 
+              size="lg"
+              className="bg-[#ea384c] hover:bg-[#ea384c]/90 text-white gap-2"
+              onClick={() => window.open('https://www.buymeacoffee.com/developer', '_blank')}
+            >
+              <Coffee className="h-5 w-5" />
+              Buy me a coffee
+            </Button>
+          </div>
+        </Card>
+      </div>
+
+      <div className="max-w-4xl mx-auto">
+        <Card className="border-none shadow-xl p-6 bg-gradient-to-br from-primary/5 to-primary/10">
+          <h2 className="text-2xl font-bold mb-4 text-center">Get in Touch</h2>
+          <div className="text-center space-y-4">
+            <p className="text-lg text-slate-700 dark:text-slate-300">
+              Have suggestions or feedback? I'd love to hear from you!
+            </p>
+            <div className="flex justify-center gap-4">
+              <Button 
+                variant="outline"
+                className="gap-2"
+                onClick={() => window.open('mailto:contact@developer.com')}
+              >
+                <Mail className="h-5 w-5" />
+                Send Email
+              </Button>
+              <Button 
+                variant="outline"
+                className="gap-2"
+                onClick={() => window.open('/feedback', '_blank')}
+              >
+                <MessageSquare className="h-5 w-5" />
+                Send Feedback
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
       
       <div className="max-w-4xl mx-auto">
         <h2 className="text-2xl font-bold mb-4">About the Project</h2>
@@ -102,11 +153,6 @@ const DevelopersDesk = () => {
           <div className="bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm">
             <h3 className="text-xl font-semibold mb-3">Future Enhancements</h3>
             <ul className="list-disc list-inside space-y-2 text-slate-600 dark:text-slate-400">
-              <li>In-app messaging system for users to communicate without sharing phone numbers</li>
-              <li>AI-powered image recognition to automatically categorize and match lost/found items</li>
-              <li>Integration with campus security and lost & found offices</li>
-              <li>Push notifications for potential matches and updates</li>
-              <li>Analytics dashboard for campus administrators to track common lost items and locations</li>
             </ul>
           </div>
         </div>
