@@ -24,7 +24,7 @@ const DevelopersDesk = () => {
             <div className="p-8 flex items-center justify-center">
               <div className="w-48 h-48 rounded-full border-4 border-white dark:border-slate-800 shadow-xl overflow-hidden bg-white dark:bg-slate-800">
                 <img 
-                  src={theme === 'dark' ? '/Assets/Image-Assets/DeveloperDesk/DarkModeTransparant.png' : '/Assets/Image-Assets/DeveloperDesk/LightModeTransparant.png'}
+                  src='/Assets/Image-Assets/DeveloperDesk/DP.jpg'
                   alt="Developer" 
                   className="w-full h-full object-contain"
                 />
@@ -32,8 +32,8 @@ const DevelopersDesk = () => {
             </div>
             
             <div className="p-8 flex flex-col justify-center">
-              <h2 className="text-2xl font-bold mb-2">John Developer</h2>
-              <p className="text-primary font-medium mb-4">Full Stack Developer & UI/UX Designer</p>
+              <h2 className="text-2xl font-bold mb-2">Sai pritam Panda</h2>
+              <p className="text-primary font-medium mb-4">System Engineer & Android Developer</p>
               
               <p className="text-slate-600 dark:text-slate-400 mb-6">
                 I'm passionate about creating user-friendly applications that solve real-world problems. 
@@ -73,7 +73,7 @@ const DevelopersDesk = () => {
               Your support helps maintain and improve the platform!
             </p>
             <Button 
-              size="lg"
+              size="xl"
               className="bg-[#ea384c] hover:bg-[#ea384c]/90 text-white gap-2"
               onClick={() => navigate('/donation')}
             >
@@ -83,34 +83,6 @@ const DevelopersDesk = () => {
         </Card>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        <Card className="border-none shadow-xl p-6 bg-gradient-to-br from-primary/5 to-primary/10">
-          <h2 className="text-2xl font-bold mb-4 text-center">Get in Touch</h2>
-          <div className="text-center space-y-4">
-            <p className="text-lg text-slate-700 dark:text-slate-300">
-              Have suggestions or feedback? I'd love to hear from you!
-            </p>
-            <div className="flex justify-center gap-4">
-              <Button 
-                variant="outline"
-                className="gap-2"
-                onClick={() => window.open('mailto:contact@developer.com')}
-              >
-                <Mail className="h-5 w-5" />
-                Send Email
-              </Button>
-              <Button 
-                variant="outline"
-                className="gap-2"
-                onClick={() => window.open('/feedback', '_blank')}
-              >
-                <MessageSquare className="h-5 w-5" />
-                Send Feedback
-              </Button>
-            </div>
-          </div>
-        </Card>
-      </div>
       
       <div className="max-w-4xl mx-auto">
         <h2 className="text-2xl font-bold mb-4">About the Project</h2>
@@ -165,6 +137,35 @@ const DevelopersDesk = () => {
               {/* Future enhancement items would go here */}
             </ul>
           </div>
+
+          <div className="max-w-4xl mx-auto">
+            <Card className="border-none shadow-xl p-6 bg-gradient-to-br from-primary/5 to-primary/10">
+              <h2 className="text-2xl font-bold mb-4 text-center">Get in Touch</h2>
+              <div className="text-center space-y-4">
+                <p className="text-lg text-slate-700 dark:text-slate-300">
+                  Have suggestions or feedback? I'd love to hear from you!
+                </p>
+                <div className="flex justify-center gap-4">
+                  <Button 
+                    variant="outline"
+                    className="gap-2"
+                    onClick={() => window.open('mailto:contact@developer.com')}
+                  >
+                    <Mail className="h-5 w-5" />
+                    Send Email
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="gap-2"
+                    onClick={() => window.open('/feedback', '_blank')}
+                  >
+                    <MessageSquare className="h-5 w-5" />
+                    Send Feedback
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </div> 
         </div>
       </div>
     </div>
