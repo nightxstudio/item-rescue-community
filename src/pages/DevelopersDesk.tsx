@@ -1,7 +1,6 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Github, Linkedin, Mail, Twitter, MessageSquare } from "lucide-react";
+import { Github, Linkedin, Mail, Twitter, Instagram } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +8,34 @@ const DevelopersDesk = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   
+  const socialLinks = [
+    {
+      icon: Github,
+      label: "GitHub",
+      href: "https://github.com/saipritampanda",
+    },
+    {
+      icon: Linkedin,
+      label: "LinkedIn",
+      href: "https://linkedin.com/in/saipritampanda",
+    },
+    {
+      icon: Instagram,
+      label: "Instagram",
+      href: "https://instagram.com/saipritampanda",
+    },
+    {
+      icon: Twitter,
+      label: "Twitter",
+      href: "https://twitter.com/saipritampanda",
+    },
+    {
+      icon: Mail,
+      label: "Email",
+      href: "mailto:contact@saipritampanda.com",
+    },
+  ];
+
   return (
     <div className="space-y-8">
       <div className="text-center max-w-3xl mx-auto">
@@ -32,7 +59,7 @@ const DevelopersDesk = () => {
             </div>
             
             <div className="p-8 flex flex-col justify-center">
-              <h2 className="text-2xl font-bold mb-2">Sai pritam Panda</h2>
+              <h2 className="text-2xl font-bold mb-2">Sai Pritam Panda</h2>
               <p className="text-primary font-medium mb-4">System Engineer & Android Developer</p>
               
               <p className="text-slate-600 dark:text-slate-400 mb-6">
@@ -42,22 +69,18 @@ const DevelopersDesk = () => {
               </p>
               
               <div className="flex flex-wrap gap-3">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Github className="h-4 w-4" />
-                  <span>GitHub</span>
-                </Button>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Linkedin className="h-4 w-4" />
-                  <span>LinkedIn</span>
-                </Button>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Twitter className="h-4 w-4" />
-                  <span>Twitter</span>
-                </Button>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Mail className="h-4 w-4" />
-                  <span>Email</span>
-                </Button>
+                {socialLinks.map((link) => (
+                  <Button
+                    key={link.label}
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 hover:bg-primary/10 hover:text-primary transition-colors"
+                    onClick={() => window.open(link.href, '_blank')}
+                  >
+                    <link.icon className="h-4 w-4" />
+                    <span>{link.label}</span>
+                  </Button>
+                ))}
               </div>
             </div>
           </div>
@@ -73,11 +96,11 @@ const DevelopersDesk = () => {
               Your support helps maintain and improve the platform!
             </p>
             <Button 
-              size="xl"
-              className="bg-[#ea384c] hover:bg-[#ea384c]/90 text-white gap-2"
+              size="lg"
+              className="bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] hover:from-[#8b77e5] hover:to-[#6E59AB] text-white gap-2 px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               onClick={() => navigate('/donation')}
             >
-              Please Support
+              Support this Project
             </Button>
           </div>
         </Card>
@@ -118,7 +141,7 @@ const DevelopersDesk = () => {
                 <p className="text-xs text-slate-500">Styling</p>
               </div>
               <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-md text-center">
-                <p className="font-medium">Firebase</p>
+                <p className="font-medium">Supabase</p>
                 <p className="text-xs text-slate-500">Backend Services</p>
               </div>
             </div>
