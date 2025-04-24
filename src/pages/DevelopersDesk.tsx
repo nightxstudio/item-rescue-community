@@ -1,10 +1,13 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Coffee, Github, Linkedin, Mail, Twitter, MessageSquare } from "lucide-react";
+import { Github, Linkedin, Mail, Twitter, MessageSquare } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import { useNavigate } from "react-router-dom";
 
 const DevelopersDesk = () => {
   const { theme } = useTheme();
+  const navigate = useNavigate();
   
   return (
     <div className="space-y-8">
@@ -72,10 +75,9 @@ const DevelopersDesk = () => {
             <Button 
               size="lg"
               className="bg-[#ea384c] hover:bg-[#ea384c]/90 text-white gap-2"
-              onClick={() => window.open('https://www.buymeacoffee.com/developer', '_blank')}
+              onClick={() => navigate('/donation')}
             >
-              <Coffee className="h-5 w-5" />
-              Buy me a coffee
+              Please Support
             </Button>
           </div>
         </Card>
@@ -152,7 +154,15 @@ const DevelopersDesk = () => {
           
           <div className="bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm">
             <h3 className="text-xl font-semibold mb-3">Future Enhancements</h3>
+            <div className="flex justify-center">
+              <img 
+                src={theme === 'dark' ? '/Assets/Image-Assets/DeveloperDesk/DarkModeTransparant.png' : '/Assets/Image-Assets/DeveloperDesk/LightModeTransparant.png'}
+                alt="Future Enhancements" 
+                className="h-40 object-contain my-4"
+              />
+            </div>
             <ul className="list-disc list-inside space-y-2 text-slate-600 dark:text-slate-400">
+              {/* Future enhancement items would go here */}
             </ul>
           </div>
         </div>

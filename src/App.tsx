@@ -1,121 +1,147 @@
-
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "@/context/AuthContext";
-import { ThemeProvider } from "@/context/ThemeContext";
-import Layout from "@/components/layout/Layout";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import Landing from "./pages/Landing";
-import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
-import ProfileCompletion from "./pages/ProfileCompletion";
+import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import ProfileCompletion from "./pages/ProfileCompletion";
 import LostItems from "./pages/LostItems";
 import FoundItems from "./pages/FoundItems";
 import DevelopersDesk from "./pages/DevelopersDesk";
 import FAQ from "./pages/FAQ";
-import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
-import Dashboard from "./pages/Dashboard";
+import Layout from "@/components/layout/Layout";
+import { useEffect, useState } from "react";
+import { Toaster } from "@/components/ui/sonner";
+import Donation from "./pages/Donation";
 
-const queryClient = new QueryClient();
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isLoggedIn } = useAuth();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Landing />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              
-              {/* Protected routes */}
-              <Route element={<Layout />}>
-                <Route 
-                  path="/dashboard" 
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/profile-completion" 
-                  element={
-                    <ProtectedRoute>
-                      <ProfileCompletion />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/profile" 
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/lost-items" 
-                  element={
-                    <ProtectedRoute>
-                      <LostItems />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/found-items" 
-                  element={
-                    <ProtectedRoute>
-                      <FoundItems />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/developers-desk" 
-                  element={
-                    <ProtectedRoute>
-                      <DevelopersDesk />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/faq" 
-                  element={
-                    <ProtectedRoute>
-                      <FAQ />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route
-                  path="/settings"
-                  element={
-                    <ProtectedRoute>
-                      <Settings />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/delete-account" element={<Navigate to="/settings" />} />
-              </Route>
-              
-              {/* 404 route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+  if (!isLoggedIn) {
+    return <Navigate to="/login" />;
+  }
+
+  return <>{children}</>;
+};
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path="/" element={<Landing />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/404" element={<NotFound />} />
+      <Route
+        path="/"
+        element={
+          <Layout />
+        }
+      >
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile-completion"
+          element={
+            <ProtectedRoute>
+              <ProfileCompletion />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lost-items"
+          element={
+            <ProtectedRoute>
+              <LostItems />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/found-items"
+          element={
+            <ProtectedRoute>
+              <FoundItems />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/developers-desk"
+          element={
+            <ProtectedRoute>
+              <DevelopersDesk />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/faq"
+          element={
+            <ProtectedRoute>
+              <FAQ />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/donation"
+          element={
+            <ProtectedRoute>
+              <Donation />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+      <Route path="*" element={<Navigate to="/404" replace />} />
+    </>
+  )
 );
+
+function App() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
+  return (
+    <>
+      <Toaster />
+      <RouterProvider router={router} />
+    </>
+  );
+}
 
 export default App;
