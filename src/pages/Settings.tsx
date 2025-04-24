@@ -1,4 +1,3 @@
-
 import { useTheme } from "@/context/ThemeContext";
 import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
@@ -36,7 +35,6 @@ const Settings = () => {
   const handleThemeChange = () => {
     toggleTheme();
     
-    // Show success toast for theme change with animation
     toast.success(`${theme === 'dark' ? 'Light' : 'Dark'} Mode Activated`, {
       description: `Theme has been changed to ${theme === 'dark' ? 'light' : 'dark'} mode.`,
       position: "bottom-center",
@@ -57,7 +55,6 @@ const Settings = () => {
       
       await deleteAccount();
       
-      // Navigate to home page after account deletion
       navigate("/");
     } catch (error) {
       console.error("Account deletion failed:", error);
@@ -80,7 +77,6 @@ const Settings = () => {
       </motion.h1>
       
       <div className="max-w-md space-y-8">
-        {/* Appearance Settings */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -104,7 +100,6 @@ const Settings = () => {
           </Card>
         </motion.div>
 
-        {/* Notification Settings */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -127,21 +122,20 @@ const Settings = () => {
           </Card>
         </motion.div>
         
-        {/* Account Settings */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
         >
           <h2 className="text-lg font-semibold mb-3 text-destructive">Account Management</h2>
-          <Card className="p-6 hover:shadow-md transition-shadow border-destructive/20">
-            <h3 className="font-medium text-destructive mb-4">Delete Your Account</h3>
+          <Card className="p-6 hover:shadow-md transition-shadow border-destructive/60 bg-destructive/10">
+            <h3 className="font-medium text-[#ea384c] mb-4">Delete Your Account</h3>
             
-            <div className="bg-destructive/10 p-4 rounded-md flex items-start gap-3 mb-4">
+            <div className="bg-destructive/20 p-4 rounded-md flex items-start gap-3 mb-4">
               <AlertCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
               <div>
                 <p className="font-medium text-destructive mb-1">Warning</p>
-                <ul className="text-sm space-y-1 text-slate-700 dark:text-slate-300 list-disc list-inside">
+                <ul className="text-sm space-y-1 text-white list-disc list-inside">
                   <li>Your profile information will be permanently deleted</li>
                   <li>Your lost and found item reports will be removed</li>
                   <li>You won't be able to recover your account</li>
@@ -177,7 +171,6 @@ const Settings = () => {
         </motion.div>
       </div>
       
-      {/* Delete Account Confirmation Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

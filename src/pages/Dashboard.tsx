@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
@@ -116,10 +117,10 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold flex items-center">
-          Dashboard
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <div className="text-right">
           <ClockDisplay />
-        </h1>
+        </div>
       </div>
       
       <Tabs defaultValue="lost" onValueChange={setActiveTab} className="w-full">
