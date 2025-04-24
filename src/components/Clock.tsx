@@ -1,6 +1,5 @@
 
 import { useEffect, useState } from "react";
-import { Clock } from "lucide-react";
 
 function formatTime(date: Date) {
   return date.toLocaleTimeString([], {
@@ -25,11 +24,12 @@ const ClockDisplay = () => {
     const timer = setInterval(() => setDate(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+  
   return (
-    <span className="flex items-center gap-2 text-xs text-muted-foreground ml-2 select-none">
-      <Clock size={14} className="mr-1" />
-      {formatDate(date)}, {formatTime(date)}
-    </span>
+    <div className="text-right">
+      <div className="text-base font-medium">{formatDate(date)}</div>
+      <div className="text-sm text-muted-foreground">{formatTime(date)}</div>
+    </div>
   );
 };
 

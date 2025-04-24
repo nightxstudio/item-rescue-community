@@ -1,5 +1,5 @@
 
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import {
@@ -11,6 +11,8 @@ import {
   Settings,
   Trash2
 } from "lucide-react";
+import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet";
+import { useEffect } from "react";
 
 type SidebarLink = {
   name: string;
@@ -18,9 +20,16 @@ type SidebarLink = {
   icon: React.ElementType;
 };
 
-const Sidebar = () => {
+type SidebarProps = {
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  isMobile?: boolean;
+}
+
+const Sidebar = ({ isOpen, onOpenChange, isMobile = false }: SidebarProps) => {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const links: SidebarLink[] = [
     {
@@ -62,49 +71,72 @@ const Sidebar = () => {
 
   if (!user) return null;
 
-  return (
-    <aside className="flex flex-col w-64 h-screen bg-sidebar dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 fixed left-0 top-0 z-40 pt-16">
-      <div className="flex flex-col flex-grow p-4 overflow-y-auto">
-        <div className="flex items-center justify-center mb-6 mt-4">
-          <div className="relative">
-            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary">
-              {user.profilePicture ? (
-                <img
-                  src={user.profilePicture}
-                  alt={user.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-secondary flex items-center justify-center">
-                  <span className="text-3xl font-bold text-primary">
-                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                  </span>
-                </div>
-              )}
-            </div>
+  const handleLinkClick = (href: string) => {
+    navigate(href);
+    if (isMobile && onOpenChange) {
+      onOpenChange(false);
+    }
+  };
+
+  const renderSidebarContent = () => (
+    <div className="flex flex-col flex-grow p-4 overflow-y-auto">
+      <div className="flex items-center justify-center mb-6 mt-4">
+        <div className="relative">
+          <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary">
+            {user.profilePicture ? (
+              <img
+                src={user.profilePicture}
+                alt={user.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-secondary flex items-center justify-center">
+                <span className="text-3xl font-bold text-primary">
+                  {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
+      </div>
 
-        <div className="text-center mb-6">
-          <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
-            {user.name || "Complete your profile"}
-          </h3>
-          {user.occupation && (
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              {user.occupation === 'student'
-                ? user.studentType === 'school'
-                  ? 'School Student'
-                  : 'College Student'
-                : 'Working Professional'
-              }
-            </p>
-          )}
-        </div>
+      <div className="text-center mb-6">
+        <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
+          {user.name || "Complete your profile"}
+        </h3>
+        {user.occupation && (
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            {user.occupation === 'student'
+              ? user.studentType === 'school'
+                ? 'School Student'
+                : 'College Student'
+              : 'Working Professional'
+            }
+          </p>
+        )}
+      </div>
 
-        <nav className="flex-1">
-          <ul className="space-y-1">
-            {links.map((link) => (
-              <li key={link.name}>
+      <nav className="flex-1">
+        <ul className="space-y-1">
+          {links.map((link) => (
+            <li key={link.name}>
+              {isMobile ? (
+                <SheetClose asChild>
+                  <Link
+                    to={link.href}
+                    className={cn(
+                      "flex items-center px-4 py-3 text-sm font-medium rounded-md transition-all hover:bg-primary/10 hover:text-primary",
+                      location.pathname === link.href
+                        ? "bg-primary/10 text-primary"
+                        : "text-slate-700 dark:text-slate-300"
+                    )}
+                    onClick={() => handleLinkClick(link.href)}
+                  >
+                    <link.icon className="w-5 h-5 mr-3" />
+                    {link.name}
+                  </Link>
+                </SheetClose>
+              ) : (
                 <Link
                   to={link.href}
                   className={cn(
@@ -117,24 +149,29 @@ const Sidebar = () => {
                   <link.icon className="w-5 h-5 mr-3" />
                   {link.name}
                 </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-      <div className="p-4 mt-auto w-full">
-        <Link
-          to="/delete-account"
-          className={cn(
-            "flex items-center w-full px-4 py-3 text-sm font-medium rounded-md transition-all " +
-            "bg-red-600 text-white hover:bg-red-700"
-          )}
-          style={{ minWidth: 0, width: "100%" }}
-        >
-          <Trash2 className="w-5 h-5 mr-3" />
-          Delete Account
-        </Link>
-      </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  );
+
+  // For mobile, render sidebar in Sheet
+  if (isMobile) {
+    return (
+      <Sheet open={isOpen} onOpenChange={onOpenChange}>
+        <SheetContent side="left" className="p-0 w-64 bg-sidebar dark:bg-slate-900">
+          {renderSidebarContent()}
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // For desktop, render sidebar directly
+  return (
+    <aside className="hidden md:flex flex-col w-64 h-screen bg-sidebar dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 fixed left-0 top-0 z-40 pt-16">
+      {renderSidebarContent()}
     </aside>
   );
 };

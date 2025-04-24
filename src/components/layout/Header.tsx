@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
@@ -5,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Moon, Sun, LogOut, Menu } from "lucide-react";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
 import Sidebar from "./Sidebar";
 
 const Header = () => {
@@ -22,8 +22,7 @@ const Header = () => {
     }
   };
 
-  const showHamburger =
-    isMobile && isLoggedIn && isProfileComplete;
+  const showHamburger = isLoggedIn && isProfileComplete;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-200">
@@ -36,7 +35,7 @@ const Header = () => {
             "truncate " +
             "select-none " +
             (isMobile
-              ? "text-lg"
+              ? "text-sm md:text-lg"
               : "text-2xl")
           }
           style={{
@@ -47,24 +46,17 @@ const Header = () => {
         </Link>
 
         <div className="flex items-center gap-4">
-          {showHamburger && (
-            <>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="rounded-full block md:hidden"
-                aria-label="Open navigation"
-                onClick={() => setSidebarOpen(true)}
-              >
-                <Menu className="h-7 w-7" />
-              </Button>
-              <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-                <SheetContent side="left" className="p-0 w-64 bg-sidebar dark:bg-slate-900">
-                  <Sidebar />
-                </SheetContent>
-              </Sheet>
-            </>
+          {showHamburger && isMobile && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="rounded-full md:hidden"
+              aria-label="Open navigation"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
           )}
           {isLoggedIn ? (
             <div className="flex items-center gap-3">
@@ -121,6 +113,9 @@ const Header = () => {
           )}
         </div>
       </div>
+      
+      {/* Mobile sidebar for smaller screens */}
+      {isMobile && <Sidebar isOpen={sidebarOpen} onOpenChange={setSidebarOpen} isMobile={true} />}
     </header>
   );
 };

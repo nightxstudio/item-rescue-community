@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,7 +18,6 @@ import LostItems from "./pages/LostItems";
 import FoundItems from "./pages/FoundItems";
 import DevelopersDesk from "./pages/DevelopersDesk";
 import FAQ from "./pages/FAQ";
-import DeleteAccount from "./pages/DeleteAccount";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import Dashboard from "./pages/Dashboard";
@@ -97,14 +97,6 @@ const App = () => (
                     </ProtectedRoute>
                   } 
                 />
-                <Route 
-                  path="/delete-account" 
-                  element={
-                    <ProtectedRoute>
-                      <DeleteAccount />
-                    </ProtectedRoute>
-                  } 
-                />
                 <Route
                   path="/settings"
                   element={
@@ -113,6 +105,7 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
+                <Route path="/delete-account" element={<Navigate to="/settings" />} />
               </Route>
               
               {/* 404 route */}
