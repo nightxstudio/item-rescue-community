@@ -30,53 +30,52 @@ const mockLoginHistory = [
 
 export const SecuritySettings = () => {
   const [autoLogoutTimer, setAutoLogoutTimer] = useState(
-    localStorage.getItem("autoLogoutTimer") || "30"
+    localStorage.getItem("autoLogoutTimer") || "disabled"
   );
-  const [idleTimer, setIdleTimer] = useState<NodeJS.Timeout | null>(null);
 
   // Setup and handle the auto-logout timer
   useEffect(() => {
+    let idleTimer: NodeJS.Timeout | null = null;
+
     const resetIdleTimer = () => {
       if (idleTimer) clearTimeout(idleTimer);
-      const newTimer = setTimeout(() => {
-        // In a real app, you would call your logout function here
-        toast.info("You have been logged out due to inactivity", {
-          description: "Please log in again to continue.",
-        });
-        // Mock logout - in a real app, redirect to login
-        console.log("Auto-logout triggered after", autoLogoutTimer, "minutes of inactivity");
-        localStorage.removeItem("isLoggedIn"); // Simple mock of logout
-        // Typically would call an auth logout function here
-      }, parseInt(autoLogoutTimer) * 60 * 1000); // Convert minutes to milliseconds
-      setIdleTimer(newTimer);
+      if (autoLogoutTimer !== "disabled") {
+        const newTimer = setTimeout(() => {
+          toast.info("You have been logged out due to inactivity", {
+            description: "Please log in again to continue.",
+          });
+          console.log("Auto-logout triggered after", autoLogoutTimer, "minutes of inactivity");
+          localStorage.removeItem("isLoggedIn");
+        }, parseInt(autoLogoutTimer) * 60 * 1000);
+        idleTimer = newTimer;
+      }
     };
 
-    // Set up event listeners for user activity
-    const events = ["mousedown", "keydown", "touchstart", "mousemove"];
-    events.forEach(event => document.addEventListener(event, resetIdleTimer));
+    if (autoLogoutTimer !== "disabled") {
+      const events = ["mousedown", "keydown", "touchstart", "mousemove"];
+      events.forEach(event => document.addEventListener(event, resetIdleTimer));
+      resetIdleTimer();
 
-    // Initialize the timer
-    resetIdleTimer();
-
-    // Cleanup function to remove event listeners and clear the timer
-    return () => {
-      if (idleTimer) clearTimeout(idleTimer);
-      events.forEach(event => document.removeEventListener(event, resetIdleTimer));
-    };
+      return () => {
+        if (idleTimer) clearTimeout(idleTimer);
+        events.forEach(event => document.removeEventListener(event, resetIdleTimer));
+      };
+    }
   }, [autoLogoutTimer]);
 
   const handleAutoLogoutChange = (value: string) => {
     setAutoLogoutTimer(value);
     localStorage.setItem("autoLogoutTimer", value);
-    toast.success("Auto-logout timer updated", {
-      description: `You will be logged out after ${value} minutes of inactivity.`,
-    });
+    toast.success(
+      value === "disabled" 
+        ? "Auto-logout disabled" 
+        : `Auto-logout timer set to ${value} minutes`
+    );
   };
 
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-semibold mb-3">Security</h2>
-      
       <Card className="p-6">
         <div className="space-y-6">
           <div className="flex items-center justify-between">
@@ -94,6 +93,7 @@ export const SecuritySettings = () => {
                 <SelectValue placeholder="Select duration" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="disabled">Disabled</SelectItem>
                 <SelectItem value="5">5 minutes</SelectItem>
                 <SelectItem value="15">15 minutes</SelectItem>
                 <SelectItem value="30">30 minutes</SelectItem>

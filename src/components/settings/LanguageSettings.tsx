@@ -1,38 +1,26 @@
 
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Languages } from "lucide-react";
 
 const languages = [
   { code: "en", name: "English" },
-  { code: "hi", name: "हिंदी (Hindi)" },
-  { code: "bn", name: "বাংলা (Bengali)" },
-  { code: "te", name: "తెలుగు (Telugu)" },
-  { code: "ta", name: "தமிழ் (Tamil)" },
-  { code: "ml", name: "മലയാളം (Malayalam)" },
+  { code: "hi", name: "हिंदी (Hindi)" }
 ];
 
 export const LanguageSettings = () => {
   const [language, setLanguage] = useState(localStorage.getItem("language") || "en");
 
-  // Apply language setting on initial load and changes
   useEffect(() => {
-    // This would integrate with an actual i18n library in a real app
     document.documentElement.setAttribute("lang", language);
-    console.log(`Language set to: ${language}`);
-    
-    // Here you would typically load the appropriate language file 
-    // and update the UI text throughout the application
+    localStorage.setItem("language", language);
   }, [language]);
 
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
-    localStorage.setItem("language", value);
-    
-    // Get the language name to display in the toast
     const selectedLanguage = languages.find(lang => lang.code === value);
     
     toast.success(`Language updated to ${selectedLanguage?.name}`, {
