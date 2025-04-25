@@ -1,10 +1,9 @@
-
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Language } from "lucide-react";
+import { Languages } from "lucide-react";
 
 const languages = [
   { code: "en", name: "English" },
@@ -33,7 +32,7 @@ export const LanguageSettings = () => {
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <Label className="text-base flex items-center gap-2">
-              <Language className="w-4 h-4" />
+              <Languages className="w-4 h-4" />
               Display Language
             </Label>
             <p className="text-sm text-slate-500 dark:text-slate-400">
