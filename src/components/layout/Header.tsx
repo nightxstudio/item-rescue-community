@@ -7,6 +7,7 @@ import { Moon, Sun, LogOut, Menu } from "lucide-react";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Sidebar from "./Sidebar";
+import { toast } from "sonner";
 
 const Header = () => {
   const { isLoggedIn, logout, isProfileComplete } = useAuth();
@@ -20,6 +21,11 @@ const Header = () => {
       e.preventDefault();
       navigate("/lost-items");
     }
+  };
+
+  const handleThemeToggle = () => {
+    toggleTheme();
+    toast.success(`Theme switched to ${theme === 'light' ? 'dark' : 'light'} mode`);
   };
 
   const showHamburger = isLoggedIn && isProfileComplete;
@@ -63,7 +69,7 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={toggleTheme}
+                onClick={handleThemeToggle}
                 className="rounded-full"
                 aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
               >
@@ -99,7 +105,7 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={toggleTheme}
+                onClick={handleThemeToggle}
                 className="rounded-full"
                 aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
               >

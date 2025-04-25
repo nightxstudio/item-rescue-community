@@ -9,10 +9,7 @@ import { toast } from "sonner";
 import { Sun, Moon, Monitor } from "lucide-react";
 
 export const AppearanceSettings = () => {
-  const { theme, toggleTheme } = useTheme();
-  const [themeMode, setThemeMode] = useState<"light" | "dark" | "system">(
-    localStorage.getItem("themeMode") as "light" | "dark" | "system" || "system"
-  );
+  const { theme, themeMode, setThemeMode } = useTheme();
   const [fontSize, setFontSize] = useState(localStorage.getItem("fontSize") || "medium");
   const [density, setDensity] = useState(localStorage.getItem("density") || "comfortable");
   const [borderRadius, setBorderRadius] = useState(localStorage.getItem("borderRadius") || "medium");
@@ -22,33 +19,7 @@ export const AppearanceSettings = () => {
     document.documentElement.setAttribute("data-font-size", fontSize);
     document.documentElement.setAttribute("data-density", density);
     document.documentElement.setAttribute("data-radius", borderRadius);
-    
-    // Add theme listener for system preference changes when in system mode
-    if (themeMode === "system") {
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      
-      const handleChange = (e: MediaQueryListEvent) => {
-        if ((e.matches && theme === "light") || (!e.matches && theme === "dark")) {
-          toggleTheme();
-        }
-      };
-      
-      mediaQuery.addEventListener("change", handleChange);
-      return () => mediaQuery.removeEventListener("change", handleChange);
-    }
-  }, []);
-
-  // Effect to handle theme mode changes
-  useEffect(() => {
-    if (themeMode === "system") {
-      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      if ((isDark && theme === "light") || (!isDark && theme === "dark")) {
-        toggleTheme();
-      }
-    } else if ((themeMode === "dark" && theme === "light") || (themeMode === "light" && theme === "dark")) {
-      toggleTheme();
-    }
-  }, [themeMode, theme]);
+  }, [fontSize, density, borderRadius]);
 
   const handleThemeModeChange = (value: "light" | "dark" | "system") => {
     setThemeMode(value);

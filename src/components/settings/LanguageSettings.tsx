@@ -15,8 +15,12 @@ export const LanguageSettings = () => {
   const [language, setLanguage] = useState(localStorage.getItem("language") || "en");
 
   useEffect(() => {
+    // Apply language settings to the document
     document.documentElement.setAttribute("lang", language);
     localStorage.setItem("language", language);
+
+    // Apply language-specific styles
+    document.documentElement.setAttribute("data-language", language);
   }, [language]);
 
   const handleLanguageChange = (value: string) => {

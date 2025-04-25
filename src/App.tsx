@@ -24,6 +24,7 @@ import Layout from "@/components/layout/Layout";
 import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import Donation from "./pages/Donation";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isLoggedIn } = useAuth();
@@ -43,6 +44,7 @@ const router = createBrowserRouter(
       <Route path="/login" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/404" element={<NotFound />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route
         path="/"
         element={

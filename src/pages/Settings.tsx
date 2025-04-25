@@ -22,9 +22,14 @@ const Settings = () => {
       localStorage.setItem("settingsInitialized", "true");
       
       // Apply default settings
+      document.documentElement.setAttribute("lang", "en");
+      document.documentElement.setAttribute("data-language", "en");
       document.documentElement.setAttribute("data-font-size", "medium");
       document.documentElement.setAttribute("data-density", "comfortable");
       document.documentElement.setAttribute("data-radius", "medium");
+      
+      // Apply dark mode as default
+      document.documentElement.classList.add("dark");
     }
   }, []);
 

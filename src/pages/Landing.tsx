@@ -1,8 +1,7 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, Shield, Users } from "lucide-react";
+import { ArrowRight, CheckCircle2, Shield, Users, ExternalLink } from "lucide-react";
 
 const Landing = () => {
   return (
@@ -235,12 +234,47 @@ const Landing = () => {
         </div>
       </section>
       
-      {/* Footer */}
-      <footer className="py-8 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
-        <div className="container px-4 mx-auto text-center">
-          <p className="text-slate-600 dark:text-slate-400">
-            © {new Date().getFullYear()} Lost & Found Department. All rights reserved.
-          </p>
+      {/* Enhanced Footer */}
+      <footer className="py-12 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
+        <div className="container px-4 mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <h3 className="text-lg font-bold mb-4">Lost & Found Department</h3>
+              <p className="text-slate-600 dark:text-slate-400 mb-4">
+                Helping you reconnect with your lost belongings through our community-driven platform.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-4">Quick Links</h3>
+              <ul className="space-y-2 text-slate-600 dark:text-slate-400">
+                <li><Link to="/signup" className="hover:text-primary transition-colors">Sign Up</Link></li>
+                <li><Link to="/login" className="hover:text-primary transition-colors">Log In</Link></li>
+                <li><Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-4">Legal</h3>
+              <ul className="space-y-2 text-slate-600 dark:text-slate-400">
+                <li>
+                  <a 
+                    href="/privacy-policy" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="hover:text-primary transition-colors flex items-center gap-1"
+                  >
+                    Privacy Policy
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </li>
+                <li><Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="pt-8 border-t border-slate-200 dark:border-slate-800 text-center">
+            <p className="text-slate-600 dark:text-slate-400">
+              © {new Date().getFullYear()} Lost & Found Department. All rights reserved.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
