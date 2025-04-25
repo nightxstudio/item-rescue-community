@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Github, Linkedin, Mail, Twitter, Instagram } from "lucide-react";
+import { Github, Linkedin, Mail, Twitter, Instagram, MessageSquare } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
