@@ -34,6 +34,7 @@ export const SecuritySettings = () => {
   );
   const [idleTimer, setIdleTimer] = useState<NodeJS.Timeout | null>(null);
 
+  // Setup and handle the auto-logout timer
   useEffect(() => {
     const resetIdleTimer = () => {
       if (idleTimer) clearTimeout(idleTimer);
@@ -42,15 +43,22 @@ export const SecuritySettings = () => {
         toast.info("You have been logged out due to inactivity", {
           description: "Please log in again to continue.",
         });
-      }, parseInt(autoLogoutTimer) * 60 * 1000);
+        // Mock logout - in a real app, redirect to login
+        console.log("Auto-logout triggered after", autoLogoutTimer, "minutes of inactivity");
+        localStorage.removeItem("isLoggedIn"); // Simple mock of logout
+        // Typically would call an auth logout function here
+      }, parseInt(autoLogoutTimer) * 60 * 1000); // Convert minutes to milliseconds
       setIdleTimer(newTimer);
     };
 
+    // Set up event listeners for user activity
     const events = ["mousedown", "keydown", "touchstart", "mousemove"];
     events.forEach(event => document.addEventListener(event, resetIdleTimer));
 
+    // Initialize the timer
     resetIdleTimer();
 
+    // Cleanup function to remove event listeners and clear the timer
     return () => {
       if (idleTimer) clearTimeout(idleTimer);
       events.forEach(event => document.removeEventListener(event, resetIdleTimer));
