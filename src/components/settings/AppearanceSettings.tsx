@@ -1,83 +1,102 @@
-
 import { useTheme } from "@/context/ThemeContext";
-import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Sun, Moon, Monitor } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 
 export const AppearanceSettings = () => {
-  const { theme, toggleTheme } = useTheme();
-  const [themeMode, setThemeMode] = useState<"light" | "dark" | "system">(
-    localStorage.getItem("themeMode") as "light" | "dark" | "system" || "system"
-  );
+  const { themeMode, setThemeMode } = useTheme();
+  const { isLoggedIn, user } = useAuth();
   const [fontSize, setFontSize] = useState(localStorage.getItem("fontSize") || "medium");
   const [density, setDensity] = useState(localStorage.getItem("density") || "comfortable");
   const [borderRadius, setBorderRadius] = useState(localStorage.getItem("borderRadius") || "medium");
 
-  // Apply all settings on initial render
+  useEffect(() => {
+    if (isLoggedIn && user?.id) {
+      const fetchSettings = async () => {
+        const { data, error } = await supabase
+          .from('user_settings')
+          .select('font_size, density, border_radius')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (data && !error) {
+          setFontSize(data.font_size);
+          setDensity(data.density);
+          setBorderRadius(data.border_radius);
+          
+          document.documentElement.setAttribute("data-font-size", data.font_size);
+          document.documentElement.setAttribute("data-density", data.density);
+          document.documentElement.setAttribute("data-radius", data.border_radius);
+        }
+      };
+      
+      fetchSettings();
+    }
+  }, [isLoggedIn, user?.id]);
+
   useEffect(() => {
     document.documentElement.setAttribute("data-font-size", fontSize);
     document.documentElement.setAttribute("data-density", density);
     document.documentElement.setAttribute("data-radius", borderRadius);
-    
-    // Add theme listener for system preference changes when in system mode
-    if (themeMode === "system") {
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      
-      const handleChange = (e: MediaQueryListEvent) => {
-        if ((e.matches && theme === "light") || (!e.matches && theme === "dark")) {
-          toggleTheme();
-        }
-      };
-      
-      mediaQuery.addEventListener("change", handleChange);
-      return () => mediaQuery.removeEventListener("change", handleChange);
-    }
   }, []);
 
-  // Effect to handle theme mode changes
-  useEffect(() => {
-    if (themeMode === "system") {
-      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      if ((isDark && theme === "light") || (!isDark && theme === "dark")) {
-        toggleTheme();
-      }
-    } else if ((themeMode === "dark" && theme === "light") || (themeMode === "light" && theme === "dark")) {
-      toggleTheme();
-    }
-  }, [themeMode, theme]);
-
-  const handleThemeModeChange = (value: "light" | "dark" | "system") => {
-    setThemeMode(value);
-    localStorage.setItem("themeMode", value);
+  const handleThemeModeChange = (value: string) => {
+    setThemeMode(value as "light" | "dark" | "system");
     
     toast.success(`Theme mode set to ${value}`, {
       description: `Your theme will now ${value === 'system' ? 'follow your system preferences' : `stay in ${value} mode`}.`,
     });
   };
 
-  const handleFontSizeChange = (value: string) => {
+  const updateSetting = async (setting: string, value: string) => {
+    if (isLoggedIn && user?.id) {
+      const { error } = await supabase
+        .from('user_settings')
+        .update({ [setting]: value })
+        .eq('user_id', user.id);
+        
+      if (error) {
+        console.error(`Error updating ${setting}:`, error);
+        toast.error(`Failed to save ${setting} setting`);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleFontSizeChange = async (value: string) => {
     setFontSize(value);
     localStorage.setItem("fontSize", value);
     document.documentElement.setAttribute("data-font-size", value);
-    toast.success("Font size updated");
+    
+    if (await updateSetting('font_size', value)) {
+      toast.success("Font size updated");
+    }
   };
 
-  const handleDensityChange = (value: string) => {
+  const handleDensityChange = async (value: string) => {
     setDensity(value);
     localStorage.setItem("density", value);
     document.documentElement.setAttribute("data-density", value);
-    toast.success("Display density updated");
+    
+    if (await updateSetting('density', value)) {
+      toast.success("Display density updated");
+    }
   };
 
-  const handleBorderRadiusChange = (value: string) => {
+  const handleBorderRadiusChange = async (value: string) => {
     setBorderRadius(value);
     localStorage.setItem("borderRadius", value);
     document.documentElement.setAttribute("data-radius", value);
-    toast.success("Border radius updated");
+    
+    if (await updateSetting('border_radius', value)) {
+      toast.success("Border radius updated");
+    }
   };
 
   return (

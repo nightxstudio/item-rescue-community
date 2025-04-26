@@ -170,6 +170,54 @@ export type Database = {
         }
         Relationships: []
       }
+      user_settings: {
+        Row: {
+          allow_analytics: boolean | null
+          allow_cookies: boolean | null
+          allow_marketing: boolean | null
+          auto_logout_minutes: number | null
+          border_radius: string
+          created_at: string | null
+          density: string
+          font_size: string
+          id: string
+          language: string
+          theme_mode: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          allow_analytics?: boolean | null
+          allow_cookies?: boolean | null
+          allow_marketing?: boolean | null
+          auto_logout_minutes?: number | null
+          border_radius?: string
+          created_at?: string | null
+          density?: string
+          font_size?: string
+          id?: string
+          language?: string
+          theme_mode?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          allow_analytics?: boolean | null
+          allow_cookies?: boolean | null
+          allow_marketing?: boolean | null
+          auto_logout_minutes?: number | null
+          border_radius?: string
+          created_at?: string | null
+          density?: string
+          font_size?: string
+          id?: string
+          language?: string
+          theme_mode?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
