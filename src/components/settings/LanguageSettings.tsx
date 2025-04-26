@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Languages } from "lucide-react";
+import { useUserSettings } from "@/hooks/useUserSettings";
 
 const languages = [
   { code: "en", name: "English" },
@@ -12,24 +13,25 @@ const languages = [
 ];
 
 export const LanguageSettings = () => {
-  const [language, setLanguage] = useState(localStorage.getItem("language") || "en");
+  const { settings, updateSettings, isLoading } = useUserSettings();
+  const [language, setLanguage] = useState(settings.language || "en");
 
   useEffect(() => {
-    // Apply language settings to the document
-    document.documentElement.setAttribute("lang", language);
-    localStorage.setItem("language", language);
+    if (!isLoading) {
+      setLanguage(settings.language);
+    }
+  }, [settings.language, isLoading]);
 
-    // Apply language-specific styles
-    document.documentElement.setAttribute("data-language", language);
-  }, [language]);
-
-  const handleLanguageChange = (value: string) => {
+  const handleLanguageChange = async (value: string) => {
     setLanguage(value);
-    const selectedLanguage = languages.find(lang => lang.code === value);
+    const success = await updateSettings({ language: value });
     
-    toast.success(`Language updated to ${selectedLanguage?.name}`, {
-      description: "The application language has been changed.",
-    });
+    if (success) {
+      const selectedLanguage = languages.find(lang => lang.code === value);
+      toast.success(`Language updated to ${selectedLanguage?.name}`, {
+        description: "The application language has been changed.",
+      });
+    }
   };
 
   return (

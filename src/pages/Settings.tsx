@@ -1,7 +1,6 @@
 
 import { motion } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
-import { useEffect } from "react";
 import { AppearanceSettings } from "@/components/settings/AppearanceSettings";
 import { NotificationSettings } from "@/components/settings/NotificationSettings";
 import { SecuritySettings } from "@/components/settings/SecuritySettings";
@@ -10,29 +9,6 @@ import { AccountManagement } from "@/components/settings/AccountManagement";
 import { CookieSettings } from "@/components/settings/CookieSettings";
 
 const Settings = () => {
-  // Set default settings for new users
-  useEffect(() => {
-    if (!localStorage.getItem("settingsInitialized")) {
-      // Set default values
-      localStorage.setItem("language", "en");
-      localStorage.setItem("themeMode", "dark");
-      localStorage.setItem("fontSize", "medium");
-      localStorage.setItem("density", "comfortable");
-      localStorage.setItem("borderRadius", "medium");
-      localStorage.setItem("settingsInitialized", "true");
-      
-      // Apply default settings
-      document.documentElement.setAttribute("lang", "en");
-      document.documentElement.setAttribute("data-language", "en");
-      document.documentElement.setAttribute("data-font-size", "medium");
-      document.documentElement.setAttribute("data-density", "comfortable");
-      document.documentElement.setAttribute("data-radius", "medium");
-      
-      // Apply dark mode as default
-      document.documentElement.classList.add("dark");
-    }
-  }, []);
-
   return (
     <div className="space-y-6">
       <motion.h1 

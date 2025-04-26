@@ -1,54 +1,65 @@
 
-import { useTheme } from "@/context/ThemeContext";
+import { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Sun, Moon, Monitor } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
+import { useUserSettings } from "@/hooks/useUserSettings";
 
 export const AppearanceSettings = () => {
-  const { theme, themeMode, setThemeMode } = useTheme();
-  const [fontSize, setFontSize] = useState(localStorage.getItem("fontSize") || "medium");
-  const [density, setDensity] = useState(localStorage.getItem("density") || "comfortable");
-  const [borderRadius, setBorderRadius] = useState(localStorage.getItem("borderRadius") || "medium");
+  const { themeMode, setThemeMode } = useTheme();
+  const { settings, updateSettings, isLoading } = useUserSettings();
+  const [fontSize, setFontSize] = useState(settings.fontSize || "medium");
+  const [density, setDensity] = useState(settings.density || "comfortable");
+  const [borderRadius, setBorderRadius] = useState(settings.borderRadius || "medium");
 
-  // Apply all settings on initial render
   useEffect(() => {
-    document.documentElement.setAttribute("data-font-size", fontSize);
-    document.documentElement.setAttribute("data-density", density);
-    document.documentElement.setAttribute("data-radius", borderRadius);
-  }, [fontSize, density, borderRadius]);
+    if (!isLoading) {
+      setFontSize(settings.fontSize);
+      setDensity(settings.density);
+      setBorderRadius(settings.borderRadius);
+    }
+  }, [settings, isLoading]);
 
-  const handleThemeModeChange = (value: "light" | "dark" | "system") => {
+  const handleThemeModeChange = async (value: "light" | "dark" | "system") => {
     setThemeMode(value);
-    localStorage.setItem("themeMode", value);
+    const success = await updateSettings({ themeMode: value });
     
-    toast.success(`Theme mode set to ${value}`, {
-      description: `Your theme will now ${value === 'system' ? 'follow your system preferences' : `stay in ${value} mode`}.`,
-    });
+    if (success) {
+      toast.success(`Theme mode set to ${value}`, {
+        description: `Your theme will now ${value === 'system' ? 'follow your system preferences' : `stay in ${value} mode`}.`,
+      });
+    }
   };
 
-  const handleFontSizeChange = (value: string) => {
+  const handleFontSizeChange = async (value: string) => {
     setFontSize(value);
-    localStorage.setItem("fontSize", value);
-    document.documentElement.setAttribute("data-font-size", value);
-    toast.success("Font size updated");
+    const success = await updateSettings({ fontSize: value });
+    
+    if (success) {
+      toast.success("Font size updated");
+    }
   };
 
-  const handleDensityChange = (value: string) => {
+  const handleDensityChange = async (value: string) => {
     setDensity(value);
-    localStorage.setItem("density", value);
-    document.documentElement.setAttribute("data-density", value);
-    toast.success("Display density updated");
+    const success = await updateSettings({ density: value });
+    
+    if (success) {
+      toast.success("Display density updated");
+    }
   };
 
-  const handleBorderRadiusChange = (value: string) => {
+  const handleBorderRadiusChange = async (value: string) => {
     setBorderRadius(value);
-    localStorage.setItem("borderRadius", value);
-    document.documentElement.setAttribute("data-radius", value);
-    toast.success("Border radius updated");
+    const success = await updateSettings({ borderRadius: value });
+    
+    if (success) {
+      toast.success("Border radius updated");
+    }
   };
 
   return (
