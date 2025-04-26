@@ -28,6 +28,23 @@ const DEFAULT_SETTINGS: UserSettingsType = {
   allowMarketing: false,
 };
 
+// Define the database schema type for user_settings
+type DbUserSettings = {
+  id: string;
+  user_id: string;
+  language: string;
+  theme_mode: string;
+  font_size: string;
+  density: string;
+  border_radius: string;
+  auto_logout_minutes: number | null;
+  allow_cookies: boolean;
+  allow_analytics: boolean;
+  allow_marketing: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 export const useUserSettings = () => {
   const { user, isLoggedIn } = useAuth();
   const [settings, setSettings] = useState<UserSettingsType>(DEFAULT_SETTINGS);
@@ -63,16 +80,17 @@ export const useUserSettings = () => {
 
         if (data) {
           // We found settings in the database
+          const dbSettings = data as DbUserSettings;
           setSettings({
-            language: data.language || DEFAULT_SETTINGS.language,
-            themeMode: data.theme_mode || DEFAULT_SETTINGS.themeMode,
-            fontSize: data.font_size || DEFAULT_SETTINGS.fontSize,
-            density: data.density || DEFAULT_SETTINGS.density,
-            borderRadius: data.border_radius || DEFAULT_SETTINGS.borderRadius,
-            autoLogoutMinutes: data.auto_logout_minutes,
-            allowCookies: data.allow_cookies !== undefined ? data.allow_cookies : DEFAULT_SETTINGS.allowCookies,
-            allowAnalytics: data.allow_analytics !== undefined ? data.allow_analytics : DEFAULT_SETTINGS.allowAnalytics,
-            allowMarketing: data.allow_marketing !== undefined ? data.allow_marketing : DEFAULT_SETTINGS.allowMarketing,
+            language: dbSettings.language || DEFAULT_SETTINGS.language,
+            themeMode: dbSettings.theme_mode || DEFAULT_SETTINGS.themeMode,
+            fontSize: dbSettings.font_size || DEFAULT_SETTINGS.fontSize,
+            density: dbSettings.density || DEFAULT_SETTINGS.density,
+            borderRadius: dbSettings.border_radius || DEFAULT_SETTINGS.borderRadius,
+            autoLogoutMinutes: dbSettings.auto_logout_minutes,
+            allowCookies: dbSettings.allow_cookies !== undefined ? dbSettings.allow_cookies : DEFAULT_SETTINGS.allowCookies,
+            allowAnalytics: dbSettings.allow_analytics !== undefined ? dbSettings.allow_analytics : DEFAULT_SETTINGS.allowAnalytics,
+            allowMarketing: dbSettings.allow_marketing !== undefined ? dbSettings.allow_marketing : DEFAULT_SETTINGS.allowMarketing,
           });
         } else {
           // No settings found, create default settings in the database
