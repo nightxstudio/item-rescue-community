@@ -100,7 +100,7 @@ const FAQ = () => {
           onClick={() => setActiveCategory(null)}
           className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
             activeCategory === null
-              ? "bg-primary text-black ring-2 ring-primary"
+              ? "bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground ring-2 ring-primary"
               : "bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
           }`}
         >
@@ -112,7 +112,7 @@ const FAQ = () => {
             onClick={() => setActiveCategory(category.id)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               activeCategory === category.id
-                ? "bg-primary text-black ring-2 ring-primary"
+                ? "bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground ring-2 ring-primary"
                 : "bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
             }`}
           >

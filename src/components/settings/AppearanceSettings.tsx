@@ -30,21 +30,24 @@ export const AppearanceSettings = () => {
           setDensity(data.density);
           setBorderRadius(data.border_radius);
           
-          document.documentElement.setAttribute("data-font-size", data.font_size);
-          document.documentElement.setAttribute("data-density", data.density);
-          document.documentElement.setAttribute("data-radius", data.border_radius);
+          // Apply settings to document
+          applySettings(data.font_size, data.density, data.border_radius);
         }
       };
       
       fetchSettings();
+    } else {
+      // Apply local settings if not logged in
+      applySettings(fontSize, density, borderRadius);
     }
   }, [isLoggedIn, user?.uid]);
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-font-size", fontSize);
-    document.documentElement.setAttribute("data-density", density);
-    document.documentElement.setAttribute("data-radius", borderRadius);
-  }, []);
+  // Apply settings to document
+  const applySettings = (font: string, dens: string, radius: string) => {
+    document.documentElement.setAttribute("data-font-size", font);
+    document.documentElement.setAttribute("data-density", dens);
+    document.documentElement.setAttribute("data-radius", radius);
+  };
 
   const handleThemeModeChange = (value: string) => {
     setThemeMode(value as "light" | "dark" | "system");
