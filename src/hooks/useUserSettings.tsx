@@ -46,22 +46,47 @@ type DbUserSettings = {
 };
 
 export const useUserSettings = () => {
-  const { user, isLoggedIn } = useAuth();
+  // Try to get auth context, but handle the case where it might not be available
+  let isLoggedIn = false;
+  let user = null;
+  
+  try {
+    const authContext = useAuth();
+    isLoggedIn = authContext.isLoggedIn;
+    user = authContext.user;
+  } catch (error) {
+    // If useAuth fails (not within AuthProvider), we'll use local settings only
+    console.log("Auth context not available, using local settings only");
+  }
+  
   const [settings, setSettings] = useState<UserSettingsType>(DEFAULT_SETTINGS);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Load initial settings from localStorage
+  useEffect(() => {
+    const loadLocalSettings = () => {
+      const localSettings = localStorage.getItem("userSettings");
+      if (localSettings) {
+        try {
+          setSettings(JSON.parse(localSettings));
+        } catch (e) {
+          console.error("Error parsing local settings:", e);
+          setSettings(DEFAULT_SETTINGS);
+        }
+      } else {
+        setSettings(DEFAULT_SETTINGS);
+      }
+      setIsLoading(false);
+    };
+    
+    loadLocalSettings();
+  }, []);
 
   // Fetch settings from the database when the user is logged in
   useEffect(() => {
     const fetchSettings = async () => {
       if (!isLoggedIn || !user?.uid) {
-        // If not logged in, use local settings or defaults
-        const localSettings = localStorage.getItem("userSettings");
-        if (localSettings) {
-          setSettings(JSON.parse(localSettings));
-        } else {
-          setSettings(DEFAULT_SETTINGS);
-        }
-        setIsLoading(false);
+        // Already loaded local settings in the previous useEffect
         return;
       }
 
