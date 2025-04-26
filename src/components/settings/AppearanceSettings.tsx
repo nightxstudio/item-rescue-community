@@ -1,3 +1,4 @@
+
 import { useTheme } from "@/context/ThemeContext";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -16,12 +17,12 @@ export const AppearanceSettings = () => {
   const [borderRadius, setBorderRadius] = useState(localStorage.getItem("borderRadius") || "medium");
 
   useEffect(() => {
-    if (isLoggedIn && user?.id) {
+    if (isLoggedIn && user?.uid) {
       const fetchSettings = async () => {
         const { data, error } = await supabase
           .from('user_settings')
           .select('font_size, density, border_radius')
-          .eq('user_id', user.id)
+          .eq('user_id', user.uid)
           .single();
         
         if (data && !error) {
@@ -37,7 +38,7 @@ export const AppearanceSettings = () => {
       
       fetchSettings();
     }
-  }, [isLoggedIn, user?.id]);
+  }, [isLoggedIn, user?.uid]);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-font-size", fontSize);
@@ -54,11 +55,11 @@ export const AppearanceSettings = () => {
   };
 
   const updateSetting = async (setting: string, value: string) => {
-    if (isLoggedIn && user?.id) {
+    if (isLoggedIn && user?.uid) {
       const { error } = await supabase
         .from('user_settings')
         .update({ [setting]: value })
-        .eq('user_id', user.id);
+        .eq('user_id', user.uid);
         
       if (error) {
         console.error(`Error updating ${setting}:`, error);

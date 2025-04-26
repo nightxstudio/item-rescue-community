@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
 import { useEffect } from "react";
@@ -18,14 +17,14 @@ const Settings = () => {
   // Initialize settings for new users
   useEffect(() => {
     const initializeSettings = async () => {
-      if (!isLoggedIn || !user?.id) return;
+      if (!isLoggedIn || !user?.uid) return;
 
       try {
         // Check if user has settings
         const { data, error } = await supabase
           .from('user_settings')
           .select('id')
-          .eq('user_id', user.id)
+          .eq('user_id', user.uid)
           .single();
         
         // If no settings exist, create default settings
@@ -41,7 +40,7 @@ const Settings = () => {
           const { error: insertError } = await supabase
             .from('user_settings')
             .insert({
-              user_id: user.id,
+              user_id: user.uid,
               language,
               theme_mode: themeMode,
               font_size: fontSize,
@@ -68,7 +67,7 @@ const Settings = () => {
     };
     
     initializeSettings();
-  }, [isLoggedIn, user?.id]);
+  }, [isLoggedIn, user?.uid]);
 
   return (
     <div className="space-y-6">

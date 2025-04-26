@@ -37,12 +37,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   // Sync theme mode with database when user is logged in
   useEffect(() => {
-    if (isLoggedIn && user?.id) {
+    if (isLoggedIn && user?.uid) {
       const fetchSettings = async () => {
         const { data, error } = await supabase
           .from('user_settings')
           .select('theme_mode')
-          .eq('user_id', user.id)
+          .eq('user_id', user.uid)
           .single();
         
         if (data && !error) {
@@ -60,7 +60,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       
       fetchSettings();
     }
-  }, [isLoggedIn, user?.id]);
+  }, [isLoggedIn, user?.uid]);
 
   // Update document when theme changes
   useEffect(() => {
@@ -101,11 +101,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     }
     
     // Update in database if user is logged in
-    if (isLoggedIn && user?.id) {
+    if (isLoggedIn && user?.uid) {
       const { error } = await supabase
         .from('user_settings')
         .update({ theme_mode: newMode })
-        .eq('user_id', user.id);
+        .eq('user_id', user.uid);
       
       if (error) {
         console.error("Error updating theme mode in database:", error);
