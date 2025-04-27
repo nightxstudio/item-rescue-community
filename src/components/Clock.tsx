@@ -27,22 +27,29 @@ const ClockDisplay = () => {
   }, []);
 
   const formatTimeDisplay = (date: Date) => {
-    return date.toLocaleTimeString([], {
+    const options: Intl.DateTimeFormatOptions = {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
       hour12: timeFormat === '12h'
-    });
+    };
+    
+    return date.toLocaleTimeString([], options);
   };
 
   const formatDateDisplay = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
+    let options: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "long",
       day: "numeric"
     };
     
-    return date.toLocaleDateString([], options);
+    // Use the appropriate locale based on date format
+    if (dateFormat === 'DD/MM/YYYY') {
+      return date.toLocaleDateString('en-GB', options);
+    } else {
+      return date.toLocaleDateString('en-US', options);
+    }
   };
   
   return (

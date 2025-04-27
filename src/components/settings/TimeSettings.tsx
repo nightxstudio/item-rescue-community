@@ -26,6 +26,23 @@ export const TimeSettings = () => {
         if (data && !error) {
           setTimeFormat(data.time_format);
           setDateFormat(data.date_format);
+        } else {
+          // If no settings found, ensure we set the defaults
+          setTimeFormat('12h');
+          setDateFormat('MM/DD/YYYY');
+          
+          // Save default settings to database
+          const { error: updateError } = await supabase
+            .from('user_settings')
+            .upsert({ 
+              user_id: user.uid,
+              time_format: '12h',
+              date_format: 'MM/DD/YYYY'
+            }, { onConflict: 'user_id' });
+            
+          if (updateError) {
+            console.error("Error setting default time/date format:", updateError);
+          }
         }
       };
       

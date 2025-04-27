@@ -34,15 +34,17 @@ export const formatDate = (dateString: string | null | undefined, userId?: strin
   
   if (isNaN(date.getTime())) return 'Invalid date';
 
-  // Default formatting - now using 12h format and MM/DD/YYYY as defaults
-  return new Intl.DateTimeFormat('en-US', {
+  // Default to MM/DD/YYYY format and 12h time
+  const options: Intl.DateTimeFormatOptions = {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
     hour12: true
-  }).format(date);
+  };
+
+  return new Intl.DateTimeFormat('en-US', options).format(date);
 };
 
 /**
@@ -62,26 +64,21 @@ export const formatDateWithPreferences = async (dateString: string | null | unde
 
   const hour12 = timeFormat === '12h';
   
-  let dateParts: Intl.DateTimeFormatOptions = {
+  const options: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
     minute: '2-digit',
     hour12,
     year: 'numeric'
   };
   
+  // Set the date format based on user preference
   if (dateFormat === 'DD/MM/YYYY') {
-    dateParts = {
-      ...dateParts,
-      day: '2-digit',
-      month: '2-digit'
-    };
+    options.day = '2-digit';
+    options.month = '2-digit';
+    return new Intl.DateTimeFormat('en-GB', options).format(date); // Use en-GB for DD/MM format
   } else {
-    dateParts = {
-      ...dateParts,
-      month: '2-digit',
-      day: '2-digit'
-    };
+    options.month = '2-digit';
+    options.day = '2-digit';
+    return new Intl.DateTimeFormat('en-US', options).format(date); // Use en-US for MM/DD format
   }
-
-  return new Intl.DateTimeFormat('en-US', dateParts).format(date);
 };

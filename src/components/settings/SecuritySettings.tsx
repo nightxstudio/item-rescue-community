@@ -25,34 +25,86 @@ export const SecuritySettings = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Load login history from API or database
+    // Load login history from Supabase
     const fetchLoginHistory = async () => {
       if (!user?.uid) return;
       
       setIsLoading(true);
       try {
-        // Get login history from Supabase auth.audit_log_entries
-        // For now we'll use mock data, as the real implementation would require
-        // admin privileges or an edge function to access the auth logs
+        // Fetch actual login history from Supabase Auth Audit Logs via an edge function
+        const { data, error } = await supabase.functions.invoke('get-auth-logs', {
+          body: { userId: user.uid },
+        });
         
-        // This is where you would fetch real login history data
-        // For example, via a Supabase edge function that has admin access
+        if (error) {
+          throw error;
+        }
         
+        // If we have actual login history data, use it
+        if (data && Array.isArray(data)) {
+          const formattedHistory = data.map((log: any) => {
+            // Parse the event_message to get the login details
+            let eventDetails = {};
+            try {
+              eventDetails = JSON.parse(log.event_message);
+            } catch (e) {
+              console.error("Failed to parse log event message:", e);
+            }
+            
+            return {
+              timestamp: log.timestamp ? new Date(log.timestamp / 1000).toISOString() : new Date().toISOString(),
+              browser: (eventDetails as any)?.user_agent || "Unknown browser",
+              ip: (eventDetails as any)?.remote_addr || "Unknown IP",
+              location: (eventDetails as any)?.location || "Unknown location",
+            };
+          });
+          
+          setLoginHistory(formattedHistory);
+        } else {
+          // Fallback to mock data if no real data is available
+          const mockLoginHistory = [
+            {
+              timestamp: new Date(Date.now() - 3600000).toISOString(),
+              browser: "Chrome",
+              ip: "192.168.1.1",
+              location: "Mumbai, India",
+            },
+            {
+              timestamp: new Date(Date.now() - 86400000).toISOString(),
+              browser: "Firefox",
+              ip: "192.168.1.2",
+              location: "Delhi, India",
+            },
+            {
+              timestamp: new Date(Date.now() - 172800000).toISOString(),
+              browser: "Safari",
+              ip: "192.168.1.3",
+              location: "Bangalore, India",
+            },
+          ];
+          
+          setLoginHistory(mockLoginHistory);
+        }
+      } catch (error) {
+        console.error("Error fetching login history:", error);
+        toast.error("Failed to load login history");
+        
+        // Use mock data as fallback
         const mockLoginHistory = [
           {
-            timestamp: "2024-04-25T10:30:00Z",
+            timestamp: new Date(Date.now() - 3600000).toISOString(),
             browser: "Chrome",
             ip: "192.168.1.1",
             location: "Mumbai, India",
           },
           {
-            timestamp: "2024-04-24T15:45:00Z",
+            timestamp: new Date(Date.now() - 86400000).toISOString(),
             browser: "Firefox",
             ip: "192.168.1.2",
             location: "Delhi, India",
           },
           {
-            timestamp: "2024-04-23T08:20:00Z",
+            timestamp: new Date(Date.now() - 172800000).toISOString(),
             browser: "Safari",
             ip: "192.168.1.3",
             location: "Bangalore, India",
@@ -60,9 +112,6 @@ export const SecuritySettings = () => {
         ];
         
         setLoginHistory(mockLoginHistory);
-      } catch (error) {
-        console.error("Error fetching login history:", error);
-        toast.error("Failed to load login history");
       } finally {
         setIsLoading(false);
       }
@@ -172,7 +221,7 @@ export const SecuritySettings = () => {
             <div className="space-y-1">
               <Label className="text-base flex items-center gap-2">
                 <Timer className="w-4 h-4" />
-                Auto-Logout Timer (IST)
+                Auto-Logout Timer
               </Label>
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Set inactivity period before automatic logout

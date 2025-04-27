@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,6 +8,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { formatDate } from "@/utils/dateUtils";
 
 const FoundItems = () => {
   const { user } = useAuth();
@@ -244,7 +244,7 @@ const FoundItems = () => {
                   <div className="font-medium">Location: {item.location}</div>
                   <p className="text-sm text-gray-500 mt-1">{item.description}</p>
                   <div className="text-xs text-gray-400 mt-2">
-                    Reported {new Date(item.created_at).toLocaleDateString()}
+                    Reported {formatDate(item.created_at)}
                   </div>
                 </CardContent>
               </Card>
@@ -272,7 +272,7 @@ const FoundItems = () => {
                   <div className="font-medium">Location: {item.location}</div>
                   <p className="text-sm text-gray-500 mt-1">{item.description}</p>
                   <div className="text-xs text-gray-400 mt-2">
-                    Reported {new Date(item.created_at).toLocaleDateString()}
+                    Reported {formatDate(item.created_at)}
                   </div>
                   <div className="text-xs text-green-500 mt-2">
                     Claimed
