@@ -33,18 +33,19 @@ export const AppearanceSettings = () => {
           .single();
         
         if (data && !error) {
-          setFontSize(data.font_size);
-          setDensity(data.density);
-          setBorderRadius(data.border_radius);
-          setTimeFormat(data.time_format || '12h');
-          setDateFormat(data.date_format || 'MM/DD/YYYY');
-          setSidebarBehavior(data.sidebar_behavior || 'auto');
+          // Using optional chaining and defaults for type safety
+          setFontSize(data?.font_size ?? 'medium');
+          setDensity(data?.density ?? 'comfortable');
+          setBorderRadius(data?.border_radius ?? 'medium');
+          setTimeFormat(data?.time_format ?? '12h');
+          setDateFormat(data?.date_format ?? 'MM/DD/YYYY');
+          setSidebarBehavior(data?.sidebar_behavior ?? 'auto');
           
           applySettings(
-            data.font_size, 
-            data.density, 
-            data.border_radius, 
-            data.sidebar_behavior || 'auto'
+            data?.font_size ?? 'medium', 
+            data?.density ?? 'comfortable', 
+            data?.border_radius ?? 'medium', 
+            data?.sidebar_behavior ?? 'auto'
           );
         }
       };

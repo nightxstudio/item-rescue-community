@@ -7,20 +7,27 @@ import { supabase } from "@/integrations/supabase/client";
 export const getDateTimePreferences = async (userId: string) => {
   if (!userId) return { timeFormat: '12h', dateFormat: 'MM/DD/YYYY' };
 
-  const { data, error } = await supabase
-    .from('user_settings')
-    .select('time_format, date_format')
-    .eq('user_id', userId)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('user_settings')
+      .select('time_format, date_format')
+      .eq('user_id', userId)
+      .single();
 
-  if (error || !data) {
+    if (error || !data) {
+      console.warn("Failed to get date/time preferences:", error?.message);
+      return { timeFormat: '12h', dateFormat: 'MM/DD/YYYY' };
+    }
+
+    return {
+      // Add type-safe access with fallbacks
+      timeFormat: data?.time_format ?? '12h',
+      dateFormat: data?.date_format ?? 'MM/DD/YYYY'
+    };
+  } catch (err) {
+    console.error("Error fetching date/time preferences:", err);
     return { timeFormat: '12h', dateFormat: 'MM/DD/YYYY' };
   }
-
-  return {
-    timeFormat: data.time_format,
-    dateFormat: data.date_format
-  };
 };
 
 /**
@@ -45,7 +52,7 @@ export const formatDate = (dateString: string | null | undefined, userId?: strin
   };
 
   // Check if we have date format preference in local storage
-  const storedDateFormat = localStorage.getItem('dateFormat');
+  const storedDateFormat = localStorage.getItem("dateFormat");
   
   // Use en-GB locale for DD/MM/YYYY format
   if (storedDateFormat === 'DD/MM/YYYY') {
@@ -67,25 +74,30 @@ export const formatDateWithPreferences = async (dateString: string | null | unde
   
   if (isNaN(date.getTime())) return 'Invalid date';
 
-  const { timeFormat, dateFormat } = userId 
-    ? await getDateTimePreferences(userId)
-    : { timeFormat: '12h', dateFormat: 'MM/DD/YYYY' };
+  try {
+    const { timeFormat, dateFormat } = userId 
+      ? await getDateTimePreferences(userId)
+      : { timeFormat: '12h', dateFormat: 'MM/DD/YYYY' };
 
-  const hour12 = timeFormat === '12h';
-  
-  const options: Intl.DateTimeFormatOptions = {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12,
-    year: 'numeric',
-    day: '2-digit',
-    month: '2-digit',
-  };
-  
-  // Set the date format based on user preference
-  if (dateFormat === 'DD/MM/YYYY') {
-    return new Intl.DateTimeFormat('en-GB', options).format(date);
-  } else {
-    return new Intl.DateTimeFormat('en-US', options).format(date);
+    const hour12 = timeFormat === '12h';
+    
+    const options: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12,
+      year: 'numeric',
+      day: '2-digit',
+      month: '2-digit',
+    };
+    
+    // Set the date format based on user preference
+    if (dateFormat === 'DD/MM/YYYY') {
+      return new Intl.DateTimeFormat('en-GB', options).format(date);
+    } else {
+      return new Intl.DateTimeFormat('en-US', options).format(date);
+    }
+  } catch (error) {
+    console.error("Error formatting date with preferences:", error);
+    return date.toLocaleDateString();
   }
 };

@@ -183,6 +183,7 @@ export type Database = {
           font_size: string
           id: string
           language: string
+          sidebar_behavior: string
           theme_mode: string
           time_format: string
           updated_at: string | null
@@ -200,6 +201,7 @@ export type Database = {
           font_size?: string
           id?: string
           language?: string
+          sidebar_behavior?: string
           theme_mode?: string
           time_format?: string
           updated_at?: string | null
@@ -217,6 +219,7 @@ export type Database = {
           font_size?: string
           id?: string
           language?: string
+          sidebar_behavior?: string
           theme_mode?: string
           time_format?: string
           updated_at?: string | null

@@ -36,7 +36,8 @@ const Layout = () => {
             .single();
             
           if (data && !error) {
-            const behavior = data.sidebar_behavior;
+            // Using optional chaining and nullish coalescing for type safety
+            const behavior = data?.sidebar_behavior ?? 'auto';
             if (behavior === "always") {
               shouldShowSidebar = true;
             } else if (behavior === "hidden") {

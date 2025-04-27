@@ -20,14 +20,18 @@ const ClockDisplay = () => {
       
       // Then try to get from database if user is logged in
       if (user?.uid) {
-        const prefs = await getDateTimePreferences(user.uid);
-        
-        // Update state and localStorage with database values
-        setTimeFormat(prefs.timeFormat);
-        setDateFormat(prefs.dateFormat);
-        
-        localStorage.setItem('timeFormat', prefs.timeFormat);
-        localStorage.setItem('dateFormat', prefs.dateFormat);
+        try {
+          const prefs = await getDateTimePreferences(user.uid);
+          
+          // Update state and localStorage with database values
+          setTimeFormat(prefs.timeFormat);
+          setDateFormat(prefs.dateFormat);
+          
+          localStorage.setItem('timeFormat', prefs.timeFormat);
+          localStorage.setItem('dateFormat', prefs.dateFormat);
+        } catch (error) {
+          console.error("Error loading date time preferences:", error);
+        }
       }
     };
     
