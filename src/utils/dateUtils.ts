@@ -25,8 +25,31 @@ export const getDateTimePreferences = async (userId: string) => {
 
 /**
  * Formats a date string based on user preferences
+ * This is a synchronous version that uses default formatting
  */
-export const formatDate = async (dateString: string | null | undefined, userId?: string): Promise<string> => {
+export const formatDate = (dateString: string | null | undefined, userId?: string): string => {
+  if (!dateString) return 'Unknown date';
+  
+  const date = new Date(dateString);
+  
+  if (isNaN(date.getTime())) return 'Invalid date';
+
+  // Default formatting (can be overridden by user settings later)
+  return new Intl.DateTimeFormat('en-US', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).format(date);
+};
+
+/**
+ * Formats a date string based on user preferences - async version
+ * This can be used when user preferences need to be fetched
+ */
+export const formatDateWithPreferences = async (dateString: string | null | undefined, userId?: string): Promise<string> => {
   if (!dateString) return 'Unknown date';
   
   const date = new Date(dateString);
@@ -38,14 +61,27 @@ export const formatDate = async (dateString: string | null | undefined, userId?:
     : { timeFormat: '24h', dateFormat: 'DD/MM/YYYY' };
 
   const hour12 = timeFormat === '12h';
-  const dateParts = dateFormat === 'DD/MM/YYYY' 
-    ? { day: '2-digit', month: '2-digit', year: 'numeric' }
-    : { month: '2-digit', day: '2-digit', year: 'numeric' };
-
-  return new Intl.DateTimeFormat('en-US', {
-    ...dateParts,
+  
+  let dateParts: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
     minute: '2-digit',
-    hour12
-  }).format(date);
+    hour12,
+    year: 'numeric'
+  };
+  
+  if (dateFormat === 'DD/MM/YYYY') {
+    dateParts = {
+      ...dateParts,
+      day: '2-digit',
+      month: '2-digit'
+    };
+  } else {
+    dateParts = {
+      ...dateParts,
+      month: '2-digit',
+      day: '2-digit'
+    };
+  }
+
+  return new Intl.DateTimeFormat('en-US', dateParts).format(date);
 };
