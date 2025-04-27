@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
  * Get current user's date and time format preferences
  */
 export const getDateTimePreferences = async (userId: string) => {
-  if (!userId) return { timeFormat: '24h', dateFormat: 'DD/MM/YYYY' };
+  if (!userId) return { timeFormat: '12h', dateFormat: 'MM/DD/YYYY' };
 
   const { data, error } = await supabase
     .from('user_settings')
@@ -14,7 +14,7 @@ export const getDateTimePreferences = async (userId: string) => {
     .single();
 
   if (error || !data) {
-    return { timeFormat: '24h', dateFormat: 'DD/MM/YYYY' };
+    return { timeFormat: '12h', dateFormat: 'MM/DD/YYYY' };
   }
 
   return {
@@ -34,14 +34,14 @@ export const formatDate = (dateString: string | null | undefined, userId?: strin
   
   if (isNaN(date.getTime())) return 'Invalid date';
 
-  // Default formatting (can be overridden by user settings later)
+  // Default formatting - now using 12h format and MM/DD/YYYY as defaults
   return new Intl.DateTimeFormat('en-US', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false
+    hour12: true
   }).format(date);
 };
 
@@ -58,7 +58,7 @@ export const formatDateWithPreferences = async (dateString: string | null | unde
 
   const { timeFormat, dateFormat } = userId 
     ? await getDateTimePreferences(userId)
-    : { timeFormat: '24h', dateFormat: 'DD/MM/YYYY' };
+    : { timeFormat: '12h', dateFormat: 'MM/DD/YYYY' };
 
   const hour12 = timeFormat === '12h';
   

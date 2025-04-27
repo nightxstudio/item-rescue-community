@@ -11,8 +11,8 @@ import { useAuth } from "@/context/AuthContext";
 
 export const TimeSettings = () => {
   const { isLoggedIn, user } = useAuth();
-  const [timeFormat, setTimeFormat] = useState('24h');
-  const [dateFormat, setDateFormat] = useState('DD/MM/YYYY');
+  const [timeFormat, setTimeFormat] = useState('12h');
+  const [dateFormat, setDateFormat] = useState('MM/DD/YYYY');
 
   useEffect(() => {
     if (isLoggedIn && user?.uid) {
@@ -67,8 +67,8 @@ export const TimeSettings = () => {
     if (!isLoggedIn || !user?.uid) return;
 
     const defaults = {
-      time_format: '24h',
-      date_format: 'DD/MM/YYYY'
+      time_format: '12h',
+      date_format: 'MM/DD/YYYY'
     };
 
     const { error } = await supabase
