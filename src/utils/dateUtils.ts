@@ -44,6 +44,15 @@ export const formatDate = (dateString: string | null | undefined, userId?: strin
     hour12: true
   };
 
+  // Check if we have date format preference in local storage
+  const storedDateFormat = localStorage.getItem('dateFormat');
+  
+  // Use en-GB locale for DD/MM/YYYY format
+  if (storedDateFormat === 'DD/MM/YYYY') {
+    return new Intl.DateTimeFormat('en-GB', options).format(date);
+  }
+  
+  // Default to en-US for MM/DD/YYYY format
   return new Intl.DateTimeFormat('en-US', options).format(date);
 };
 
@@ -68,17 +77,15 @@ export const formatDateWithPreferences = async (dateString: string | null | unde
     hour: '2-digit',
     minute: '2-digit',
     hour12,
-    year: 'numeric'
+    year: 'numeric',
+    day: '2-digit',
+    month: '2-digit',
   };
   
   // Set the date format based on user preference
   if (dateFormat === 'DD/MM/YYYY') {
-    options.day = '2-digit';
-    options.month = '2-digit';
-    return new Intl.DateTimeFormat('en-GB', options).format(date); // Use en-GB for DD/MM format
+    return new Intl.DateTimeFormat('en-GB', options).format(date);
   } else {
-    options.month = '2-digit';
-    options.day = '2-digit';
-    return new Intl.DateTimeFormat('en-US', options).format(date); // Use en-US for MM/DD format
+    return new Intl.DateTimeFormat('en-US', options).format(date);
   }
 };

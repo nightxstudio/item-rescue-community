@@ -11,10 +11,23 @@ const ClockDisplay = () => {
 
   useEffect(() => {
     const loadPreferences = async () => {
+      // First load from localStorage for quicker UI render
+      const storedTimeFormat = localStorage.getItem('timeFormat') || '12h';
+      const storedDateFormat = localStorage.getItem('dateFormat') || 'MM/DD/YYYY';
+      
+      setTimeFormat(storedTimeFormat);
+      setDateFormat(storedDateFormat);
+      
+      // Then try to get from database if user is logged in
       if (user?.uid) {
         const prefs = await getDateTimePreferences(user.uid);
+        
+        // Update state and localStorage with database values
         setTimeFormat(prefs.timeFormat);
         setDateFormat(prefs.dateFormat);
+        
+        localStorage.setItem('timeFormat', prefs.timeFormat);
+        localStorage.setItem('dateFormat', prefs.dateFormat);
       }
     };
     
@@ -38,7 +51,7 @@ const ClockDisplay = () => {
   };
 
   const formatDateDisplay = (date: Date) => {
-    let options: Intl.DateTimeFormatOptions = {
+    const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "long",
       day: "numeric"

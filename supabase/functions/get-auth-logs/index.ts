@@ -16,7 +16,6 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get the auth logs for the user
     // Parse the request body
     const { userId } = await req.json();
 
@@ -31,7 +30,7 @@ serve(async (req) => {
     }
 
     // Query the auth.audit_log_entries table (this requires service role key)
-    // We're limiting to just login events for the specific user
+    // The correct schema for this table is just 'auth', not 'public.auth'
     const { data, error } = await supabase
       .from("auth.audit_log_entries")
       .select("*")
@@ -43,7 +42,7 @@ serve(async (req) => {
     if (error) {
       console.error("Error fetching auth logs:", error);
       return new Response(
-        JSON.stringify({ error: "Failed to fetch login history" }),
+        JSON.stringify({ error: "Failed to fetch login history", details: error }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 500,
@@ -62,7 +61,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("Error:", error);
     return new Response(
-      JSON.stringify({ error: "Internal Server Error" }),
+      JSON.stringify({ error: "Internal Server Error", details: error.message }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,

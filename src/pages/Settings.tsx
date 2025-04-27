@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
 import { useEffect } from "react";
@@ -7,7 +8,6 @@ import { SecuritySettings } from "@/components/settings/SecuritySettings";
 import { LanguageSettings } from "@/components/settings/LanguageSettings";
 import { AccountManagement } from "@/components/settings/AccountManagement";
 import { CookieSettings } from "@/components/settings/CookieSettings";
-import { TimeSettings } from "@/components/settings/TimeSettings";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
@@ -32,6 +32,7 @@ const Settings = () => {
           const fontSize = localStorage.getItem("fontSize") || "medium";
           const density = localStorage.getItem("density") || "comfortable";
           const borderRadius = localStorage.getItem("borderRadius") || "medium";
+          const sidebarBehavior = localStorage.getItem("sidebarBehavior") || "auto";
           
           const { error: insertError } = await supabase
             .from('user_settings')
@@ -44,7 +45,10 @@ const Settings = () => {
               border_radius: borderRadius,
               allow_cookies: true,
               allow_analytics: false,
-              allow_marketing: false
+              allow_marketing: false,
+              time_format: '12h',
+              date_format: 'MM/DD/YYYY',
+              sidebar_behavior: sidebarBehavior
             });
             
           if (insertError) {
@@ -81,7 +85,7 @@ const Settings = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <TimeSettings />
+          <AppearanceSettings />
         </motion.div>
 
         <Separator />
@@ -101,7 +105,7 @@ const Settings = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
         >
-          <AppearanceSettings />
+          <NotificationSettings />
         </motion.div>
 
         <Separator />
@@ -111,16 +115,6 @@ const Settings = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.4 }}
         >
-          <NotificationSettings />
-        </motion.div>
-
-        <Separator />
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.5 }}
-        >
           <CookieSettings />
         </motion.div>
 
@@ -129,7 +123,7 @@ const Settings = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.6 }}
+          transition={{ duration: 0.3, delay: 0.5 }}
         >
           <AccountManagement />
         </motion.div>
