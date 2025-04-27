@@ -1,4 +1,3 @@
-
 import { useTheme } from "@/context/ThemeContext";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -10,7 +9,35 @@ import { Sun, Moon, Monitor, RotateCcw, Clock, CalendarDays, Sidebar } from "luc
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSidebar } from "@/components/ui/sidebar";
+
+const useFallbackSidebar = () => {
+  const [open, setOpen] = useState(true);
+  
+  const setOpenWrapper = (value: boolean) => {
+    setOpen(value);
+    if (value) {
+      localStorage.setItem("sidebarBehavior", "always");
+    } else {
+      localStorage.setItem("sidebarBehavior", "hidden");
+    }
+    
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event('storage'));
+    }
+  };
+  
+  return { open, setOpen: setOpenWrapper };
+};
+
+const useSafeSidebar = () => {
+  try {
+    const { useSidebar } = require("@/components/ui/sidebar");
+    return useSidebar();
+  } catch (error) {
+    console.log("Using fallback sidebar implementation");
+    return useFallbackSidebar();
+  }
+};
 
 export const AppearanceSettings = () => {
   const { themeMode, setThemeMode } = useTheme();
@@ -21,32 +48,36 @@ export const AppearanceSettings = () => {
   const [timeFormat, setTimeFormat] = useState('12h');
   const [dateFormat, setDateFormat] = useState('MM/DD/YYYY');
   const [sidebarBehavior, setSidebarBehavior] = useState(localStorage.getItem("sidebarBehavior") || "auto");
-  const { setOpen } = useSidebar();
+  const { setOpen } = useSafeSidebar();
 
   useEffect(() => {
     if (isLoggedIn && user?.uid) {
       const fetchSettings = async () => {
-        const { data, error } = await supabase
-          .from('user_settings')
-          .select('font_size, density, border_radius, time_format, date_format, sidebar_behavior')
-          .eq('user_id', user.uid)
-          .single();
-        
-        if (data && !error) {
-          // Using optional chaining and defaults for type safety
-          setFontSize(data?.font_size ?? 'medium');
-          setDensity(data?.density ?? 'comfortable');
-          setBorderRadius(data?.border_radius ?? 'medium');
-          setTimeFormat(data?.time_format ?? '12h');
-          setDateFormat(data?.date_format ?? 'MM/DD/YYYY');
-          setSidebarBehavior(data?.sidebar_behavior ?? 'auto');
+        try {
+          const { data, error } = await supabase
+            .from('user_settings')
+            .select('font_size, density, border_radius, time_format, date_format, sidebar_behavior')
+            .eq('user_id', user.uid)
+            .single();
           
-          applySettings(
-            data?.font_size ?? 'medium', 
-            data?.density ?? 'comfortable', 
-            data?.border_radius ?? 'medium', 
-            data?.sidebar_behavior ?? 'auto'
-          );
+          if (data && !error) {
+            setFontSize(data?.font_size ?? 'medium');
+            setDensity(data?.density ?? 'comfortable');
+            setBorderRadius(data?.border_radius ?? 'medium');
+            setTimeFormat(data?.time_format ?? '12h');
+            setDateFormat(data?.date_format ?? 'MM/DD/YYYY');
+            setSidebarBehavior(data?.sidebar_behavior ?? 'auto');
+            
+            applySettings(
+              data?.font_size ?? 'medium', 
+              data?.density ?? 'comfortable', 
+              data?.border_radius ?? 'medium', 
+              data?.sidebar_behavior ?? 'auto'
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching settings:", error);
+          applySettings(fontSize, density, borderRadius, sidebarBehavior);
         }
       };
       
@@ -67,18 +98,21 @@ export const AppearanceSettings = () => {
   const applySidebarBehavior = (behavior: string) => {
     localStorage.setItem("sidebarBehavior", behavior);
     
-    switch (behavior) {
-      case 'always':
-        setOpen(true);
-        break;
-      case 'hidden':
-        setOpen(false);
-        break;
-      case 'auto':
-        // Let the responsive design handle it
-        const isMobile = window.innerWidth < 768;
-        setOpen(!isMobile);
-        break;
+    try {
+      switch (behavior) {
+        case 'always':
+          setOpen(true);
+          break;
+        case 'hidden':
+          setOpen(false);
+          break;
+        case 'auto':
+          const isMobile = window.innerWidth < 768;
+          setOpen(!isMobile);
+          break;
+      }
+    } catch (error) {
+      console.error("Error applying sidebar behavior:", error);
     }
   };
 

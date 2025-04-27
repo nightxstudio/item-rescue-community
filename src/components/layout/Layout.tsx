@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const Layout = () => {
   const { isLoggedIn, isProfileComplete, user } = useAuth();
@@ -62,21 +63,23 @@ const Layout = () => {
   }, [isLoggedIn, user?.uid, isMobile]);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 antialiased">
-      <Header />
-      
-      {/* Render sidebar based on sidebar visibility preference */}
-      {isLoggedIn && isProfileComplete && !isMobile && sidebarVisible && <Sidebar />}
-      
-      <main className={cn(
-        "pt-16 transition-all duration-200",
-        isLoggedIn && isProfileComplete && !isMobile && sidebarVisible ? "md:pl-64" : ""
-      )}>
-        <div className="container mx-auto px-4 py-6">
-          <Outlet />
-        </div>
-      </main>
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 antialiased w-full">
+        <Header />
+        
+        {/* Render sidebar based on sidebar visibility preference */}
+        {isLoggedIn && isProfileComplete && !isMobile && sidebarVisible && <Sidebar />}
+        
+        <main className={cn(
+          "pt-16 transition-all duration-200",
+          isLoggedIn && isProfileComplete && !isMobile && sidebarVisible ? "md:pl-64" : ""
+        )}>
+          <div className="container mx-auto px-4 py-6">
+            <Outlet />
+          </div>
+        </main>
+      </div>
+    </SidebarProvider>
   );
 };
 

@@ -8,6 +8,8 @@ import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Sidebar from "./Sidebar";
 
+const APP_VERSION = "Stable 2.0.0";
+
 const Header = () => {
   const { isLoggedIn, logout, isProfileComplete } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -27,23 +29,26 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-200">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link
-          to={isLoggedIn && isProfileComplete ? "/lost-items" : "/"}
-          onClick={handleLogoClick}
-          className={
-            "font-bold text-primary transition-transform hover:scale-105 duration-200 " +
-            "truncate " +
-            "select-none " +
-            (isMobile
-              ? "text-sm md:text-lg"
-              : "text-2xl")
-          }
-          style={{
-            maxWidth: "80vw",
-          }}
-        >
-          Lost And Found Department
-        </Link>
+        <div className="flex flex-col">
+          <Link
+            to={isLoggedIn && isProfileComplete ? "/lost-items" : "/"}
+            onClick={handleLogoClick}
+            className={
+              "font-bold text-primary transition-transform hover:scale-105 duration-200 " +
+              "truncate " +
+              "select-none " +
+              (isMobile
+                ? "text-sm md:text-lg"
+                : "text-2xl")
+            }
+            style={{
+              maxWidth: "80vw",
+            }}
+          >
+            Lost And Found Department
+          </Link>
+          <span className="text-xs text-slate-400 mt-0.5">{APP_VERSION}</span>
+        </div>
 
         <div className="flex items-center gap-4">
           {showHamburger && isMobile && (

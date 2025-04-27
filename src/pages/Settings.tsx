@@ -8,6 +8,7 @@ import { SecuritySettings } from "@/components/settings/SecuritySettings";
 import { LanguageSettings } from "@/components/settings/LanguageSettings";
 import { AccountManagement } from "@/components/settings/AccountManagement";
 import { CookieSettings } from "@/components/settings/CookieSettings";
+import { VersionInfo } from "@/components/settings/VersionInfo";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
@@ -124,6 +125,16 @@ const Settings = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.5 }}
+        >
+          <VersionInfo />
+        </motion.div>
+
+        <Separator />
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.6 }}
         >
           <AccountManagement />
         </motion.div>
