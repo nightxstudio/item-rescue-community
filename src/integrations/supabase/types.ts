@@ -178,11 +178,13 @@ export type Database = {
           auto_logout_minutes: number | null
           border_radius: string
           created_at: string | null
+          date_format: string
           density: string
           font_size: string
           id: string
           language: string
           theme_mode: string
+          time_format: string
           updated_at: string | null
           user_id: string
         }
@@ -193,11 +195,13 @@ export type Database = {
           auto_logout_minutes?: number | null
           border_radius?: string
           created_at?: string | null
+          date_format?: string
           density?: string
           font_size?: string
           id?: string
           language?: string
           theme_mode?: string
+          time_format?: string
           updated_at?: string | null
           user_id: string
         }
@@ -208,11 +212,13 @@ export type Database = {
           auto_logout_minutes?: number | null
           border_radius?: string
           created_at?: string | null
+          date_format?: string
           density?: string
           font_size?: string
           id?: string
           language?: string
           theme_mode?: string
+          time_format?: string
           updated_at?: string | null
           user_id?: string
         }

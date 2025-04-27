@@ -7,6 +7,7 @@ import { SecuritySettings } from "@/components/settings/SecuritySettings";
 import { LanguageSettings } from "@/components/settings/LanguageSettings";
 import { AccountManagement } from "@/components/settings/AccountManagement";
 import { CookieSettings } from "@/components/settings/CookieSettings";
+import { TimeSettings } from "@/components/settings/TimeSettings";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
@@ -14,29 +15,24 @@ import { toast } from "sonner";
 const Settings = () => {
   const { isLoggedIn, user } = useAuth();
 
-  // Initialize settings for new users
   useEffect(() => {
     const initializeSettings = async () => {
       if (!isLoggedIn || !user?.uid) return;
 
       try {
-        // Check if user has settings
         const { data, error } = await supabase
           .from('user_settings')
           .select('id')
           .eq('user_id', user.uid)
           .single();
         
-        // If no settings exist, create default settings
         if (error && error.code === 'PGRST116') {
-          // Get defaults from localStorage or use hardcoded defaults
           const language = localStorage.getItem("language") || "en";
           const themeMode = localStorage.getItem("themeMode") || "dark";
           const fontSize = localStorage.getItem("fontSize") || "medium";
           const density = localStorage.getItem("density") || "comfortable";
           const borderRadius = localStorage.getItem("borderRadius") || "medium";
           
-          // Create settings in database
           const { error: insertError } = await supabase
             .from('user_settings')
             .insert({
@@ -55,7 +51,6 @@ const Settings = () => {
             console.error("Error creating user settings:", insertError);
             toast.error("Failed to initialize settings");
           } else {
-            // Apply default settings
             document.documentElement.setAttribute("data-font-size", fontSize);
             document.documentElement.setAttribute("data-density", density);
             document.documentElement.setAttribute("data-radius", borderRadius);
@@ -86,7 +81,7 @@ const Settings = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <LanguageSettings />
+          <TimeSettings />
         </motion.div>
 
         <Separator />

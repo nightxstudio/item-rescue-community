@@ -1,11 +1,11 @@
-
 import { useTheme } from "@/context/ThemeContext";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon, Monitor, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 
@@ -30,19 +30,16 @@ export const AppearanceSettings = () => {
           setDensity(data.density);
           setBorderRadius(data.border_radius);
           
-          // Apply settings to document
           applySettings(data.font_size, data.density, data.border_radius);
         }
       };
       
       fetchSettings();
     } else {
-      // Apply local settings if not logged in
       applySettings(fontSize, density, borderRadius);
     }
   }, [isLoggedIn, user?.uid]);
 
-  // Apply settings to document
   const applySettings = (font: string, dens: string, radius: string) => {
     document.documentElement.setAttribute("data-font-size", font);
     document.documentElement.setAttribute("data-density", dens);
@@ -101,6 +98,34 @@ export const AppearanceSettings = () => {
     if (await updateSetting('border_radius', value)) {
       toast.success("Border radius updated");
     }
+  };
+
+  const resetToDefaults = async () => {
+    if (!isLoggedIn || !user?.uid) return;
+
+    const defaults = {
+      theme_mode: 'system',
+      font_size: 'medium',
+      density: 'comfortable',
+      border_radius: 'medium'
+    };
+
+    const { error } = await supabase
+      .from('user_settings')
+      .update(defaults)
+      .eq('user_id', user.uid);
+
+    if (error) {
+      console.error('Error resetting appearance:', error);
+      toast.error('Failed to reset appearance settings');
+      return;
+    }
+
+    setThemeMode('system');
+    setFontSize('medium');
+    setDensity('comfortable');
+    setBorderRadius('medium');
+    toast.success('Appearance settings reset to defaults');
   };
 
   return (
@@ -198,6 +223,20 @@ export const AppearanceSettings = () => {
                 <SelectItem value="large">Large</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="pt-4 flex flex-col gap-2">
+            <Button 
+              variant="outline" 
+              className="w-full flex items-center gap-2"
+              onClick={resetToDefaults}
+            >
+              <RotateCcw className="w-4 h-4" />
+              Reset Appearance
+            </Button>
+            <p className="text-sm text-muted-foreground text-center">
+              More appearance options coming in future updates!
+            </p>
           </div>
         </div>
       </Card>
